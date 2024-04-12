@@ -1,0 +1,323 @@
+:: Variables
+var @bread 0
+var @goos 0
+var @mfe 0
+
+:: Loop Cycle
+:loop
+    :: Clears Screen
+    cls
+
+    :: Prints Counter
+    prt "Bread: \x1b[93m" @bread "\x1b[0m | Goos: \x1b[93m" @goos "\x1b[0m | MFE: \x1b[93m" @mfe "\x1b[0m"
+
+    :: Tutorial
+    prt "---"
+    prt "Press \x1b[93m[enter]\x1b[0m to gain bread!"
+    prt "You can purchase more goos or MFEs by entering the \x1b[93m[shop]\x1b[0m."
+    prt "Additionally, you can \x1b[93m[save]\x1b[0m your progress or \x1b[93m[load]\x1b[0m from an existing save."
+    prt "If you need to leave, you can also \x1b[93m[quit]\x1b[0m."
+    prt "---"
+
+    :: Grabs Command
+    read "> " ?command
+
+    :: Parses Command
+    if (command == "") "jmp incrementBread"
+    if (command == "shop") "jmp shopMenuPrompt"
+    if (command == "load") "jmp loadDataPrompt"
+    if (command == "save") "jmp saveDataPrompt"
+    if (command == "quit") "jmp quitGamePrompt"
+
+    :: Returns
+    ret
+
+:: Increments Bread Counter
+:incrementBread
+
+    :: Sets Base Multiplier
+    add @mfe 1 ?mfe
+
+    :: Sets Base Increment
+    add @goos 1 ?goos
+
+    :: Applies Multiplier
+    mul goos mfe ?bread
+
+    :: Increments Counter
+    add @bread bread ?total
+
+    :: Updates Counter
+    var @bread total
+
+    :: Returns
+    ret
+
+:: Prompts Shop Menu to User
+:shopMenuPrompt
+    :: Prompts
+    prt "---"
+    prt "What would you like to purchase today?"
+    prt "\x1b[93m[1]\x1b[0m Goos (1,000 Bread)"
+    prt "\tIncreases your bread production!"
+    prt "\x1b[93m[2]\x1b[0m MFE (100,000 Goos)"
+    prt "\tGenerates more bread on the fly!"
+    prt "Enter the number in square brackets to purchase your item!"
+    prt "Enter anything else to cancel purchase."
+
+    :: Grabs Selection
+    read "> " ?selection
+
+    :: Parses Selection
+    if (selection == "1") "jmp shopMenuGoos"
+    if (selection == "2") "jmp shopMenuMFE"
+    
+    :: Returns
+    ret
+
+:: Prompts Goos Purchase Menu to User
+:shopMenuGoos
+    :: Prompts
+    prt "---"
+    prt "How many goos would you like to purchase?"
+    div @bread 1000 ?max
+    int max ?max
+    prt "You can purchase a maximum of \x1b[93m" max "\x1b[0m goos!"
+    
+    :: Grabs Count
+    read "> " ?count
+    try "int count ?count" "var count 0"
+    if (count < 0) "var count 0"
+    
+    :: Parses Count
+    prt "---"
+    mul count 1000 ?price
+    var bread @bread
+    if (price > bread and count > 0) "prt 'Not enough bread!'" "jmp shopPurchaseGoos count"
+
+    :: Grabs Confirmation
+    read "> "
+
+    :: Returns
+    ret
+
+:: Purchases Goos
+:shopPurchaseGoos count
+    :: Purchases Goos
+    add @goos count ?goos
+    var @goos goos
+
+    :: Deduces Bread
+    mul count 1000 ?price
+    sub @bread price ?bread
+    var @bread bread
+
+    :: Prints Confirmation
+    if (count == 0) "prt 'Purchase canceled!'" "prt 'Successfully bought ' count ' goos!'"
+
+    :: Returns
+    ret
+
+:: Prompts MFE Purchase Menu to User
+:shopMenuMFE
+    :: Prompts
+    prt "---"
+    prt "How many MFE would you like to purchase?"
+    div @goos 100000 ?max
+    int max ?max
+    prt "You can purchase a maximum of \x1b[93m" max "\x1b[0m MFE(s)!"
+    
+    :: Grabs Count
+    read "> " ?count
+    try "int count ?count" "var count 0"
+    if (count < 0) "var count 0"
+    
+    :: Parses Count
+    prt "---"
+    mul count 100000 ?price
+    var goos @goos
+    if (price > goos and count > 0) "prt 'Not enough goos!'" "jmp shopPurchaseMFE count"
+
+    :: Grabs Confirmation
+    read "> "
+
+    :: Returns
+    ret
+
+:: Purchases MFE
+:shopPurchaseMFE count
+    :: Purchases MFE
+    add @mfe count ?mfe
+    var @mfe mfe
+
+    :: Deduces Goos
+    mul count 100000 ?price
+    sub @goos price ?goos
+    var @goos goos
+
+    :: Prints Confirmation
+    if (count == 0) "prt 'Purchase canceled!'" "prt 'Successfully bought ' count ' MFE(s)!'"
+
+    :: Returns
+    ret
+
+:: Prompts Load Screen to User
+:loadDataPrompt
+    :: Prompts
+    prt "---"
+    prt "Are you sure you want to load from a save file and OVERWRITE your current progress?"
+    prt "Note: if a save file does not exist, the game may crash!"
+    prt "Enter \x1b[93m[y]\x1b[0m to load."
+    prt "Enter anything else to cancel."
+
+    :: Grabs Confirmation
+    read "> " ?confirmation
+
+    :: Parses Confirmation
+    if (confirmation == "y") "jmp loadData"
+
+    :: Returns
+    ret
+
+:: Loads Data
+:loadData
+    load "save.goos" ?data
+    
+    :: Locates Separator : "10|11|12|" -> 2
+    idx data "|" ?index
+    
+    :: Parses Number : "10|11|12" -> "10"
+    sub index 1 ?end
+    chr data 0 end ?output
+    int output ?output
+    var @bread output
+    
+    :: Finds Index of Next Character in Data : "10|11|12|" -> 3
+    add index 1 ?dataStart
+    
+    :: Finds Index of Last Character in Data : "10|11|12|" -> 8
+    len data ?dataLength
+    sub dataLength 1 ?dataEnd
+
+    :: Slices Data : "10|11|12|" -> "11|12|"
+    chr data dataStart dataEnd ?data
+
+    :: Same As Above
+    idx data "|" ?index
+    sub index 1 ?end
+    chr data 0 end ?output
+    int output ?output
+    var @goos output
+    add index 1 ?dataStart
+    len data ?dataLength
+    sub dataLength 1 ?dataEnd
+    chr data dataStart dataEnd ?data
+
+    :: Same As Above
+    idx data "|" ?index
+    sub index 1 ?end
+    chr data 0 end ?output
+    int output ?output
+    var @mfe output
+    add index 1 ?dataStart
+    len data ?dataLength
+    sub dataLength 1 ?dataEnd
+    chr data dataStart dataEnd ?data
+
+    :: Returns
+    ret
+
+:: Prompts Save Screen to User
+:saveDataPrompt
+    :: Prompts
+    prt "---"
+    prt "Are you sure you want to save your progress and OVERWRITE your current save file?"
+    prt "Enter \x1b[93m[y]\x1b[0m to save."
+    prt "Enter anything else to cancel."
+
+    :: Grabs Confirmation
+    read "> " ?confirmation
+
+    :: Parses Confirmation
+    if (confirmation == "y") "jmp saveData"
+
+    :: Returns
+    ret
+
+:: Saves Data
+:saveData
+    :: Stringifies Data
+    str @bread ?bread
+    str @goos ?goos
+    str @mfe ?mfe
+
+    :: Appends Data
+    add bread "|" ?data
+    add data goos ?data
+    add data "|" ?data
+    add data mfe ?data
+    add data "|" ?data
+
+    :: Saves Data
+    save "save.goos" data
+
+    :: Returns
+    ret
+
+:: Prompts Quit Screen to User
+:quitGamePrompt
+    :: Prompts
+    prt "---"
+    prt "Are you sure you want to quit?"
+    prt "Enter \x1b[93m[y]\x1b[0m to save and quit."
+    prt "Enter \x1b[93m[q]\x1b[0m to quit without saving."
+    prt "Enter anything else to cancel."
+
+    :: Grabs Confirmation
+    read "> " ?confirmation
+
+    :: Parses Confirmation
+    if (confirmation == "y") "jmp quitGameSave"
+    if (confirmation == "q") "jmp quitGameExit"
+
+    :: Returns
+    ret
+
+:: Quits Game Without Saving Data
+:quitGameExit
+    :: Exits
+    exit
+
+    :: Returns
+    ret
+
+:: Saves Data and Quits Game
+:quitGameSave
+    :: Saves Data
+    jmp saveData
+
+    :: Exits
+    exit
+
+    :: Returns
+    ret
+
+:: Main Function
+:game
+    :: Prompts Welcome Screen
+    cls
+    prt "\x1b[94mIdle Goos\x1b[0m"
+    prt "Press \x1b[93m[enter]\x1b[0m to start!"
+    prt ""
+    prt "\x1b[90mMade with \x1b[91mLove\x1b[90m and \x1b[93mBread\x1b[90m by DmmD @ 2023\x1b[0m"
+    prt "\x1b[90mversion demo.1\x1b[0m"
+    read "> "
+    
+    :: Initiates Game Loop
+    whl (1) "jmp loop"
+
+    :: Returns
+    ret
+
+:: Initiates Game
+jmp game

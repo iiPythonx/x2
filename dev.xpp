@@ -1,0 +1,9 @@
+:class UselessClass
+    :func init (value)
+        set .value value
+
+    :func show_value ()
+        prt .value
+
+set obj UselessClass[5]
+jmp obj.show_value

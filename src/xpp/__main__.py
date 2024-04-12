@@ -1,13 +1,10 @@
 # Copyright 2022-2024 iiPython
 
 # Modules
-import os
 import sys
-import json
-from . import (
-    __version__,
-    load_sections, config, Interpreter
-)
+from pathlib import Path
+
+from . import __version__, fetch_tokens_from_file
 
 # CLI class
 class CLI(object):
@@ -16,13 +13,9 @@ class CLI(object):
         self.options = [
             {"args": ["-h", "--help"], "fn": self.show_help, "desc": "Displays the help menu"},
             {"args": ["-hl", "--helplong"], "fn": self.show_help_long, "desc": "Displays a more detailed help menu"},
-            {"args": ["-v", "--ver", "--version"], "fn": self.show_version, "desc": "Prints the x++ version"},
-            {"args": ["-i", "--installation"], "fn": self.show_install_path, "desc": "Prints the installation path"},
-            {"args": ["-s", "--show"], "fn": self.show_module, "desc": "Provides information about an installed x++ module"}
+            {"args": ["-v", "--ver", "--version"], "fn": self.show_version, "desc": "Prints the x++ version"}
         ]
-        self.install_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
-
-        self.usage = f"""x++ (x{__version__}) Interpreter
+        self.usage = f"""x++ (x{__version__})
 (c) 2021-24 iiPython; (c) 2022-23 Dm123321_31mD "DmmD" Gaming
 
 Usage:
@@ -34,7 +27,7 @@ See '{sys.executable} -m xpp -hl' for more detailed usage."""
         # Load filepath
         self.filepath = None
         if self.argv:
-            self.filepath = ([a for a in self.argv if a[0] != "-"] or [None])[-1]
+            self.filepath = Path(([a for a in self.argv if a[0] != "-"] or [None])[-1])
 
         # Handle options
         for opt in self.options:
@@ -56,65 +49,20 @@ See '{sys.executable} -m xpp -hl' for more detailed usage."""
     def show_version(self) -> None:
         return sys.exit(__version__)
 
-    def show_install_path(self) -> None:
-        return sys.exit(self.install_path)
-
-    def show_module(self) -> None:
-        if self.filepath is None:
-            return exit("usage: xpp -s <module>")
-
-        module_path = os.path.join(self.install_path, "pkgs", self.filepath.replace(".", os.sep))
-        if not os.path.isdir(module_path):
-            return exit("no such module: " + self.filepath)
-
-        # Load .xconfig
-        xconfig = os.path.join(module_path, ".xconfig")
-        if not os.path.isfile(xconfig) and "." in self.filepath:
-            xconfig = os.path.join(self.install_path, "pkgs", self.filepath.split(".")[-1], ".xconfig")
-
-        metadata = {}
-        if os.path.isfile(xconfig):
-            with open(xconfig, "r") as fh:
-                metadata = json.loads(fh.read())
-
-        # Print out information
-        exit(f"""Name: {self.filepath}
-Version: {metadata.get('version', 'N/A')}
-Summary: {metadata.get('summary', 'N/A')}
-Author: {metadata.get('author', 'N/A')}
-License: {metadata.get('license', 'N/A')}
-Location: {module_path}""")
-
 # Initialization
 cli = CLI()
 
 # Main handler
 def main() -> None:
-
-    # Load filepath
     filepath = cli.filepath
     if filepath is None:
         cli.show_help()
 
-    elif filepath == ".":
-        filepath = config.get("main", "main.xpp")
-
-    if not os.path.isfile(filepath):
+    elif not filepath.is_file():
         sys.exit("x++ Exception: no such file")
 
-    # Load file content
-    with open(filepath, "r") as f:
-        data = f.read()
-
-    # Run file
-    from .exceptions import handle_exception
-    interpreter = Interpreter(filepath, [], config = config)
-    try:
-        interpreter.sections = load_sections(data, filepath)
-        interpreter.run_section("main")
-
-    except Exception as e:
-        handle_exception(e, interpreter.stack)
+    from rich import print
+    print(fetch_tokens_from_file(filepath))
 
 if __name__ == "__main__":  # Don't run twice from setup.py import
     main()

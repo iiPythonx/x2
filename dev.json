@@ -1,0 +1,1 @@
+{"classes":{"_global":{"methods":{"_main":{"lines":[["set","obj","UselessClass[5]"],["jmp","obj.show_value"]],"args":[]}}},"UselessClass":{"methods":{"init":{"lines":[["set",".value","value"]],"args":["value"]},"show_value":{"lines":[["prt",".value"]],"args":[]}}}}}
