@@ -2,12 +2,12 @@
 
 # Modules
 import re
-from typing import List
+from typing import Any, List, Tuple
 from pathlib import Path
 
 import orjson
 
-from .expressions import REGX_GROUP_CLASS, REGX_GROUP_FUNCT
+from .expressions import REGX_GROUP_CLASS, REGX_GROUP_FUNCT, REGX_GROUP_OCALL, REGX_GROUP_FLOAT
 
 # Initialization
 configured_indent = " " * 4  # 4 spaces OR \t
@@ -17,26 +17,58 @@ class InvalidSyntax(Exception):
     pass
 
 # Exported functions
-blocks_start, blocks_end = ["{", "(", "\"", "'"], ["}", ")", "\"", "'"]
+blocks_start, blocks_end = ["{", "(", "\"", "'", "["], ["}", ")", "\"", "'", "]"]
+
+def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
+    hinted_tokens = []
+    for token in tokens[1:]:
+        if token.lstrip("-").isnumeric():
+            hinted_tokens.append(("lit", int(token)))
+
+        elif token[0] in ["\"", "'"]:
+            hinted_tokens.append(("lit", token[1:][:-1]))
+
+        elif re.match(REGX_GROUP_FLOAT, token):
+            hinted_tokens.append(("lit", float(token)))
+
+        else:
+            operator_match = re.match(REGX_GROUP_OCALL, token)
+            if operator_match is not None:
+                hinted_tokens.append(("ref", *operator_match.groups()))
+
+            else:
+                match token[0]:
+                    case "{" | "(":
+                        hinted_tokens.append(("ref", tokenize_line(token[1:][:-1])))
+
+                    case _:
+                        hinted_tokens.append(("ref", token))
+
+    return [("opr", tokens[0])] + hinted_tokens
 
 def tokenize_line(line: str) -> List[str]:
     data = {"tokens": [], "buffer": "", "depth": [None, 0]}
-    for character in line:
+    for character in line.strip():
         if not data["depth"][0] and character == " " and data["buffer"]:
             data["tokens"].append(data["buffer"])
             data["buffer"] = ""
 
         elif not data["depth"][0] and character in blocks_start:
             data["depth"] = [blocks_end[blocks_start.index(character)], 1]
+            if character == "[":
+                data["tokens"].append(data["buffer"])
+                data["buffer"] = ""
 
         elif character == data["depth"][0] and data["depth"][1] == 1:
-            data["buffer"] = f"{blocks_start[blocks_end.index(data['depth'][0])]}{data['buffer']}{data['depth'][0]}"
+            if data["depth"][0] != "]":
+                data["buffer"] = f"{blocks_start[blocks_end.index(data['depth'][0])]}{data['buffer']}{data['depth'][0]}"
+
             data["depth"] = [None, 0]
 
         else:
             data["buffer"] += character
 
-    return data["tokens"] + [data["buffer"]]
+    return typehint_tokens(data["tokens"] + [data["buffer"]])
 
 def fetch_tokens_from_file(file: Path) -> List[dict]:
     if file.suffix == ".json":
