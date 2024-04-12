@@ -21,7 +21,7 @@ blocks_start, blocks_end = ["{", "(", "\"", "'", "["], ["}", ")", "\"", "'", "]"
 
 def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
     hinted_tokens = []
-    for token in tokens[1:]:
+    for index, token in enumerate(tokens):
         if token.lstrip("-").isnumeric():
             hinted_tokens.append(("lit", int(token)))
 
@@ -32,9 +32,9 @@ def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
             hinted_tokens.append(("lit", float(token)))
 
         else:
-            operator_match = re.match(REGX_GROUP_OCALL, token)
-            if operator_match is not None:
-                hinted_tokens.append(("ref", *operator_match.groups()))
+            object_match = re.match(REGX_GROUP_OCALL, token)
+            if object_match is not None:
+                hinted_tokens.append(("obj", *object_match.groups()))
 
             else:
                 match token[0]:
@@ -42,9 +42,9 @@ def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
                         hinted_tokens.append(("ref", tokenize_line(token[1:][:-1])))
 
                     case _:
-                        hinted_tokens.append(("ref", token))
+                        hinted_tokens.append(("opr" if index == 0 else "ref", token))
 
-    return [("opr", tokens[0])] + hinted_tokens
+    return hinted_tokens
 
 def tokenize_line(line: str) -> List[str]:
     data = {"tokens": [], "buffer": "", "depth": [None, 0]}
@@ -56,19 +56,24 @@ def tokenize_line(line: str) -> List[str]:
         elif not data["depth"][0] and character in blocks_start:
             data["depth"] = [blocks_end[blocks_start.index(character)], 1]
             if character == "[":
-                data["tokens"].append(data["buffer"])
-                data["buffer"] = ""
+                data["buffer"] += "["
 
         elif character == data["depth"][0] and data["depth"][1] == 1:
             if data["depth"][0] != "]":
                 data["buffer"] = f"{blocks_start[blocks_end.index(data['depth'][0])]}{data['buffer']}{data['depth'][0]}"
 
+            else:
+                data["buffer"] += "]"
+
             data["depth"] = [None, 0]
+
+        elif data["depth"][1] == 0 and character == "\\":
+            continue
 
         else:
             data["buffer"] += character
 
-    return typehint_tokens(data["tokens"] + [data["buffer"]])
+    return typehint_tokens(data["tokens"] + ([data["buffer"]] if data["buffer"] else []))
 
 def fetch_tokens_from_file(file: Path) -> List[dict]:
     if file.suffix == ".json":
@@ -78,7 +83,7 @@ def fetch_tokens_from_file(file: Path) -> List[dict]:
     active_class, active_method, last_indent = None, None, 0
 
     content = file.read_text().splitlines()
-    for raw_line in content:
+    for index, raw_line in enumerate(content):
         line = raw_line.lstrip()
         if not line:
             continue
@@ -104,7 +109,11 @@ def fetch_tokens_from_file(file: Path) -> List[dict]:
 
             # Save line data
             method_to_add_to = tokens["classes"][active_class or "_global"]["methods"][active_method or "_main"]
-            method_to_add_to["lines"].append(tokenize_line(line))
+            if index and content[index - 1].strip() and content[index - 1][-1] == "\\":
+                method_to_add_to["lines"][-1] += tokenize_line(line)
+
+            else:
+                method_to_add_to["lines"].append(tokenize_line(line))
 
         else:
             groupings = line_match.groups()
