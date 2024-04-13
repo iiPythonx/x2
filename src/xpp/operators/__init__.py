@@ -26,3 +26,11 @@ operator, operators = wrapper.operator, wrapper.operators
 @operator("prt")
 def operator_prt(*args: List[Argument]) -> None:
     print(*args)
+
+@operator("set")
+def operator_set(variable: Argument, data: Argument) -> None:
+    variable.set(data)
+
+@operator("add")
+def operator_add(*args: List[Argument]) -> int | float | str:
+    return sum([a.value for a in args])

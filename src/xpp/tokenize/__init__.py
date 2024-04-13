@@ -60,6 +60,10 @@ def tokenize_line(line: str) -> List[str]:
     data = {"tokens": [], "buffer": "", "depth": [None, 0]}
     for character in line.strip():
         if not data["depth"][0] and character == " " and data["buffer"]:
+            if data["buffer"].strip() == "::":
+                data["buffer"] = ""
+                break
+
             data["tokens"].append(data["buffer"])
             data["buffer"] = ""
 
@@ -96,7 +100,7 @@ def fetch_tokens_from_file(file: Path) -> dict:
     content = file.read_text().splitlines()
     for index, raw_line in enumerate(content):
         line = raw_line.lstrip()
-        if not line:
+        if not line or line[:2] == "::":
             continue
 
         indent_level = raw_line[:-len(line)].replace(configured_indent, "\t").count("\t")
