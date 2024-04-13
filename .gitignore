@@ -1,6 +1,7 @@
 # Hide cache
 __pycache__/
 .venv/
+.xpp/
 
 # Hide x++ testing files
 pkgs/*

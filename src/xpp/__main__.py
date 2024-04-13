@@ -4,7 +4,7 @@
 import sys
 from pathlib import Path
 
-from . import __version__, fetch_tokens_from_file
+from . import __version__, fetch_tokens_from_file, ExecutionEngine
 
 # CLI class
 class CLI(object):
@@ -62,7 +62,11 @@ def main() -> None:
         sys.exit("x++ Exception: no such file")
 
     from rich import print
-    print(fetch_tokens_from_file(filepath))
+
+    tokens = fetch_tokens_from_file(filepath)
+
+    engine = ExecutionEngine(tokens)
+    engine.execute_method()
 
 if __name__ == "__main__":  # Don't run twice from setup.py import
     main()

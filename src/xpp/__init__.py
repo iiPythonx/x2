@@ -3,3 +3,4 @@
 __version__ = "4.0.0"
 
 from .tokenize import fetch_tokens_from_file  # noqa: F401
+from .engine import ExecutionEngine  # noqa: F401

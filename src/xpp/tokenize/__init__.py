@@ -2,14 +2,16 @@
 
 # Modules
 import re
-from typing import Any, List, Tuple
+import pickle
 from pathlib import Path
+from os.path import getmtime
+from typing import Any, List, Tuple
 
-import orjson
-
+from xpp.operators import operators
 from .expressions import REGX_GROUP_CLASS, REGX_GROUP_FUNCT, REGX_GROUP_OCALL, REGX_GROUP_FLOAT
 
 # Initialization
+cache_location = Path.cwd() / ".xpp"
 configured_indent = " " * 4  # 4 spaces OR \t
 
 # Exceptions
@@ -17,6 +19,7 @@ class InvalidSyntax(Exception):
     pass
 
 # Exported functions
+default_method = {"lines": [], "args": [], "variables": {}}
 blocks_start, blocks_end = ["{", "(", "\"", "'", "["], ["}", ")", "\"", "'", "]"]
 
 def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
@@ -42,7 +45,14 @@ def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
                         hinted_tokens.append(("ref", tokenize_line(token[1:][:-1])))
 
                     case _:
-                        hinted_tokens.append(("opr" if index == 0 else "ref", token))
+                        if index == 0:
+                            if token not in operators:
+                                raise InvalidSyntax
+                            
+                            hinted_tokens.append(("opr", operators[token]))
+
+                        else:
+                            hinted_tokens.append(("ref", token))
 
     return hinted_tokens
 
@@ -75,11 +85,12 @@ def tokenize_line(line: str) -> List[str]:
 
     return typehint_tokens(data["tokens"] + ([data["buffer"]] if data["buffer"] else []))
 
-def fetch_tokens_from_file(file: Path) -> List[dict]:
-    if file.suffix == ".json":
-        return orjson.loads(file.read_text())
+def fetch_tokens_from_file(file: Path) -> dict:
+    cached_path = cache_location / file.with_suffix(".x")
+    if cached_path.is_file() and getmtime(cached_path) >= getmtime(file):
+        return pickle.loads(cached_path.read_bytes())
 
-    tokens = {"classes": {"_global": {"methods": {"_main": {"lines": [], "args": []}}}}}
+    tokens = {"classes": {"_global": {"methods": {"_main": default_method}, "variables": {}}}}
     active_class, active_method, last_indent = None, None, 0
 
     content = file.read_text().splitlines()
@@ -126,7 +137,7 @@ def fetch_tokens_from_file(file: Path) -> List[dict]:
                     if active_class in tokens["classes"]:
                         raise InvalidSyntax
 
-                    tokens["classes"][active_class] = {"methods": {}}
+                    tokens["classes"][active_class] = {"methods": {}, "variables": {}}
 
                 case "func":
                     active_method = groupings[1]
@@ -137,10 +148,11 @@ def fetch_tokens_from_file(file: Path) -> List[dict]:
                     if active_method in class_to_add_to["methods"]:
                         raise InvalidSyntax
 
-                    class_to_add_to["methods"][active_method] = {"lines": [], "args": groupings[2].split(" ") if groupings[2] else []}
+                    class_to_add_to["methods"][active_method] = default_method | {"args": groupings[2].split(" ") if groupings[2] else []}
 
         # Continue
         last_indent = indent_level
 
-    file.with_suffix(".json").write_bytes(orjson.dumps(tokens))
+    cache_location.mkdir(exist_ok = True)
+    cached_path.write_bytes(pickle.dumps(tokens))
     return tokens

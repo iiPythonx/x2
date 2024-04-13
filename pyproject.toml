@@ -8,9 +8,6 @@ dynamic = ["version"]
 description = "The x++ programming language."
 readme = "README.md"
 license = "MIT"
-dependencies = [
-    "orjson"
-]
 requires-python = ">=3.10, <4"
 authors = [
     { name = "iiPython", email = "ben@iipython.dev" },
