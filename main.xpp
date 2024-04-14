@@ -1,9 +1,2 @@
-:func test (a b)
-    ret (add a b)
-
-:func hello ()
-    prt "Hello, world!"
-    set result (jmp test (add 1 2) (add 3 4))
-    ret result
-
-prt "Result is:" (jmp hello)
+set x 5
+if (x == 5) { prt "hello, world!" }

@@ -1,9 +1,13 @@
-:: Variables
+:: Idle Goos
+:: =============================
+
+:: Created by DmmD GM
+:: Modified for xpp v4.0 by iiPython
+
 set @bread 0
 set @goos 0
 set @mfe 0
 
-:: Loop Cycle
 :func loop ()
     :: Clears Screen
     cls
@@ -20,17 +24,14 @@ set @mfe 0
     prt "---"
 
     :: Grabs Command
-    read "> " ?command
+    set command (inp "> ")
 
     :: Parses Command
-    if (command == "") "jmp incrementBread"
-    if (command == "shop") "jmp shopMenuPrompt"
-    if (command == "load") "jmp loadDataPrompt"
-    if (command == "save") "jmp saveDataPrompt"
-    if (command == "quit") "jmp quitGamePrompt"
-
-    :: Returns
-    ret
+    if (command == "") { jmp incrementBread } \
+        (command == "shop") { jmp shopMenuPrompt } \
+        (command == "load") { jmp loadDataPrompt } \
+        (command == "save") { jmp saveDataPrompt } \
+        (command == "quit") { jmp quitGamePrompt }
 
 :: Increments Bread Counter
 :func incrementBread ()

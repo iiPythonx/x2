@@ -14,7 +14,7 @@ def tokenize(line: str) -> list:
     tokens, mode, depth, val = [], None, 0, ""
     for char in line:
         val += char
-        if mode is not None and char == block_pairs.get(mode):
+        if mode is not None and char == block_pairs[mode]:
             if depth > 1:
                 depth -= 1
 

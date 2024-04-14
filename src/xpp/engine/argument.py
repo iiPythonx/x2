@@ -7,7 +7,7 @@ from typing import Any
 class Argument():
     def __init__(self, engine: object, type_: str, value: Any, *extra) -> None:
         self.engine, self.type, self.name, self.value = engine, type_, value, value
-        if self.type == "ref":
+        if self.type == "ref" and not (isinstance(self.value, list) and self.value[0][0] == "ref"):
             if isinstance(self.value, list):
                 self.name, self.value = None, engine.execute_line(self.value)
 

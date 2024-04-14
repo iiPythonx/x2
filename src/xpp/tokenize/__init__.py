@@ -23,7 +23,7 @@ class InvalidSyntax(Exception):
 # Exported functions
 blocks_start, blocks_end = ["{", "(", "\"", "'", "["], ["}", ")", "\"", "'", "]"]
 
-def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
+def typehint_tokens(tokens: List[str], ignore_operators: bool = False) -> List[Tuple[str, Any]]:
     hinted_tokens = []
     for index, token in enumerate(tokens):
         if token.lstrip("-").isnumeric():
@@ -43,10 +43,16 @@ def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
             else:
                 match token[0]:
                     case "{" | "(":
-                        hinted_tokens.append(("ref", tokenize_line(token[1:][:-1])))
+                        hinted_tokens.append((
+                            "ref",
+                            typehint_tokens(
+                                tokenize(token[1:][:-1]),
+                                ignore_operators = hinted_tokens[0][1].__name__ == "operator_if")
+                            )
+                        )
 
                     case _:
-                        if index == 0:
+                        if index == 0 and not ignore_operators:
                             if token not in operators:
                                 raise InvalidSyntax
                             
@@ -56,40 +62,6 @@ def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
                             hinted_tokens.append(("ref", token))
 
     return hinted_tokens
-
-def tokenize_line(line: str) -> List[str]:
-    # data = {"tokens": [], "buffer": "", "depth": [None, 0]}
-    # for character in line.strip():
-    #     if not data["depth"][0] and character == " " and data["buffer"]:
-    #         if data["buffer"].strip() == "::":
-    #             data["buffer"] = ""
-    #             break
-
-    #         data["tokens"].append(data["buffer"])
-    #         data["buffer"] = ""
-
-    #     elif not data["depth"][0] and character in blocks_start:
-    #         data["depth"] = [blocks_end[blocks_start.index(character)], 1]
-    #         if character == "[":
-    #             data["buffer"] += "["
-
-    #     elif character == data["depth"][0] and data["depth"][1] == 1:
-    #         if data["depth"][0] != "]":
-    #             data["buffer"] = f"{blocks_start[blocks_end.index(data['depth'][0])]}{data['buffer']}{data['depth'][0]}"
-
-    #         else:
-    #             data["buffer"] += "]"
-
-    #         data["depth"] = [None, 0]
-
-    #     elif data["depth"][1] == 0 and character == "\\":
-    #         continue
-
-    #     else:
-    #         data["buffer"] += character
-
-    # print(data["tokens"] + [data["buffer"]])
-    return typehint_tokens(tokenize(line))
 
 def fetch_tokens_from_file(file: Path) -> dict:
     cached_path = cache_location / file.with_suffix(".x")
@@ -127,10 +99,10 @@ def fetch_tokens_from_file(file: Path) -> dict:
             # Save line data
             method_to_add_to = tokens["classes"][active_class or "_global"]["methods"][active_method or "_main"]
             if index and content[index - 1].strip() and content[index - 1][-1] == "\\":
-                method_to_add_to["lines"][-1] += tokenize_line(line)
+                method_to_add_to["lines"][-1] += typehint_tokens(tokenize(line))
 
             else:
-                method_to_add_to["lines"].append(tokenize_line(line))
+                method_to_add_to["lines"].append(typehint_tokens(tokenize(line)))
 
         else:
             groupings = line_match.groups()
