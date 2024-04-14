@@ -61,8 +61,6 @@ def main() -> None:
     elif not filepath.is_file():
         sys.exit("x++ Exception: no such file")
 
-    from rich import print
-
     tokens = fetch_tokens_from_file(filepath)
 
     engine = ExecutionEngine(tokens)

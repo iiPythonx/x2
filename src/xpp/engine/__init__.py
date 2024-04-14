@@ -12,16 +12,17 @@ class ExecutionEngine():
         self.stack = []
         self.classes = tokens["classes"]
 
-        # Default data
-        self.active_method = None
-
     def execute_line(self, line: List[Tuple[str, Any]]) -> Any:
         return line[0][1](*[Argument(self, *arg) for arg in line[1:]])
 
-    def execute_method(self, class_: str = "_global", method_: str = "_main", args: List[Tuple[str, Any]] = []) -> None:
-        self.active_method = self.classes[class_]["methods"][method_]
-        for index, key in enumerate(self.active_method["args"]):
-            self.active_method["variables"][key] = args[index]
+    def execute_method(self, class_: str = "_global", method_: str = "_main", args: List[Any] = []) -> None:
+        self.stack.append(self.classes[class_]["methods"][method_])
+        self.stack[-1]["return"] = None
 
-        for line in self.active_method["lines"]:
+        for index, key in enumerate(self.stack[-1]["args"]):
+            self.stack[-1]["variables"][key] = args[index]
+
+        for line in self.stack[-1]["lines"]:
             self.execute_line(line)
+
+        return self.stack.pop()["return"]

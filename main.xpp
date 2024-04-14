@@ -1,11 +1,9 @@
-:::func test (a b)
-::    ret (add a b)
-:::func hello ()
-::    prt "Hello, world!"
-::    set result (jmp test (add 1 2) (add 3 4))
-::    ret result
-::prt "What is up my guys?"
-::prt "Result is:" (jmp hello)
+:func test (a b)
+    ret (add a b)
 
-set a -6.45
-prt (add a 6.45)
+:func hello ()
+    prt "Hello, world!"
+    set result (jmp test (add 1 2) (add 3 4))
+    ret result
+
+prt "Result is:" (jmp hello)

@@ -12,7 +12,7 @@ class Argument():
                 self.name, self.value = None, engine.execute_line(self.value)
 
             else:
-                self.set(self.engine.active_method["variables"].get(self.value))
+                self.set(self.engine.stack[-1]["variables"].get(self.value))
 
     def __str__(self) -> str:
         return str(self.value)
@@ -25,4 +25,4 @@ class Argument():
             value = value.value
 
         self.value = value
-        self.engine.active_method["variables"][self.name] = value
+        self.engine.stack[-1]["variables"][self.name] = value

@@ -4,10 +4,12 @@
 import re
 import pickle
 from pathlib import Path
+
 from os.path import getmtime
 from typing import Any, List, Tuple
 
 from xpp.operators import operators
+from .tokenizer import tokenize
 from .expressions import REGX_GROUP_CLASS, REGX_GROUP_FUNCT, REGX_GROUP_OCALL, REGX_GROUP_FLOAT
 
 # Initialization
@@ -19,7 +21,6 @@ class InvalidSyntax(Exception):
     pass
 
 # Exported functions
-default_method = {"lines": [], "args": [], "variables": {}}
 blocks_start, blocks_end = ["{", "(", "\"", "'", "["], ["}", ")", "\"", "'", "]"]
 
 def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
@@ -57,44 +58,45 @@ def typehint_tokens(tokens: List[str]) -> List[Tuple[str, Any]]:
     return hinted_tokens
 
 def tokenize_line(line: str) -> List[str]:
-    data = {"tokens": [], "buffer": "", "depth": [None, 0]}
-    for character in line.strip():
-        if not data["depth"][0] and character == " " and data["buffer"]:
-            if data["buffer"].strip() == "::":
-                data["buffer"] = ""
-                break
+    # data = {"tokens": [], "buffer": "", "depth": [None, 0]}
+    # for character in line.strip():
+    #     if not data["depth"][0] and character == " " and data["buffer"]:
+    #         if data["buffer"].strip() == "::":
+    #             data["buffer"] = ""
+    #             break
 
-            data["tokens"].append(data["buffer"])
-            data["buffer"] = ""
+    #         data["tokens"].append(data["buffer"])
+    #         data["buffer"] = ""
 
-        elif not data["depth"][0] and character in blocks_start:
-            data["depth"] = [blocks_end[blocks_start.index(character)], 1]
-            if character == "[":
-                data["buffer"] += "["
+    #     elif not data["depth"][0] and character in blocks_start:
+    #         data["depth"] = [blocks_end[blocks_start.index(character)], 1]
+    #         if character == "[":
+    #             data["buffer"] += "["
 
-        elif character == data["depth"][0] and data["depth"][1] == 1:
-            if data["depth"][0] != "]":
-                data["buffer"] = f"{blocks_start[blocks_end.index(data['depth'][0])]}{data['buffer']}{data['depth'][0]}"
+    #     elif character == data["depth"][0] and data["depth"][1] == 1:
+    #         if data["depth"][0] != "]":
+    #             data["buffer"] = f"{blocks_start[blocks_end.index(data['depth'][0])]}{data['buffer']}{data['depth'][0]}"
 
-            else:
-                data["buffer"] += "]"
+    #         else:
+    #             data["buffer"] += "]"
 
-            data["depth"] = [None, 0]
+    #         data["depth"] = [None, 0]
 
-        elif data["depth"][1] == 0 and character == "\\":
-            continue
+    #     elif data["depth"][1] == 0 and character == "\\":
+    #         continue
 
-        else:
-            data["buffer"] += character
+    #     else:
+    #         data["buffer"] += character
 
-    return typehint_tokens(data["tokens"] + ([data["buffer"]] if data["buffer"] else []))
+    # print(data["tokens"] + [data["buffer"]])
+    return typehint_tokens(tokenize(line))
 
 def fetch_tokens_from_file(file: Path) -> dict:
     cached_path = cache_location / file.with_suffix(".x")
     if cached_path.is_file() and getmtime(cached_path) >= getmtime(file):
         return pickle.loads(cached_path.read_bytes())
 
-    tokens = {"classes": {"_global": {"methods": {"_main": default_method}, "variables": {}}}}
+    tokens = {"classes": {"_global": {"methods": {"_main": {"lines": [], "args": [], "variables": {}}}, "variables": {}}}}
     active_class, active_method, last_indent = None, None, 0
 
     content = file.read_text().splitlines()
@@ -152,7 +154,7 @@ def fetch_tokens_from_file(file: Path) -> dict:
                     if active_method in class_to_add_to["methods"]:
                         raise InvalidSyntax
 
-                    class_to_add_to["methods"][active_method] = default_method | {"args": groupings[2].split(" ") if groupings[2] else []}
+                    class_to_add_to["methods"][active_method] = {"lines": [], "args": groupings[2].split(" ") if groupings[2] else [], "variables": {}}
 
         # Continue
         last_indent = indent_level

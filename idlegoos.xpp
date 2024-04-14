@@ -1,10 +1,10 @@
 :: Variables
-var @bread 0
-var @goos 0
-var @mfe 0
+set @bread 0
+set @goos 0
+set @mfe 0
 
 :: Loop Cycle
-:loop
+:func loop ()
     :: Clears Screen
     cls
 
@@ -33,7 +33,7 @@ var @mfe 0
     ret
 
 :: Increments Bread Counter
-:incrementBread
+:func incrementBread ()
 
     :: Sets Base Multiplier
     add @mfe 1 ?mfe
@@ -48,13 +48,13 @@ var @mfe 0
     add @bread bread ?total
 
     :: Updates Counter
-    var @bread total
+    set @bread total
 
     :: Returns
     ret
 
 :: Prompts Shop Menu to User
-:shopMenuPrompt
+:func shopMenuPrompt ()
     :: Prompts
     prt "---"
     prt "What would you like to purchase today?"
@@ -76,7 +76,7 @@ var @mfe 0
     ret
 
 :: Prompts Goos Purchase Menu to User
-:shopMenuGoos
+:func shopMenuGoos ()
     :: Prompts
     prt "---"
     prt "How many goos would you like to purchase?"
@@ -86,13 +86,13 @@ var @mfe 0
     
     :: Grabs Count
     read "> " ?count
-    try "int count ?count" "var count 0"
-    if (count < 0) "var count 0"
+    try "int count ?count" "set count 0"
+    if (count < 0) "set count 0"
     
     :: Parses Count
     prt "---"
     mul count 1000 ?price
-    var bread @bread
+    set bread @bread
     if (price > bread and count > 0) "prt 'Not enough bread!'" "jmp shopPurchaseGoos count"
 
     :: Grabs Confirmation
@@ -102,15 +102,15 @@ var @mfe 0
     ret
 
 :: Purchases Goos
-:shopPurchaseGoos count
+:func shopPurchaseGoos (count)
     :: Purchases Goos
     add @goos count ?goos
-    var @goos goos
+    set @goos goos
 
     :: Deduces Bread
     mul count 1000 ?price
     sub @bread price ?bread
-    var @bread bread
+    set @bread bread
 
     :: Prints Confirmation
     if (count == 0) "prt 'Purchase canceled!'" "prt 'Successfully bought ' count ' goos!'"
@@ -119,7 +119,7 @@ var @mfe 0
     ret
 
 :: Prompts MFE Purchase Menu to User
-:shopMenuMFE
+:func shopMenuMFE ()
     :: Prompts
     prt "---"
     prt "How many MFE would you like to purchase?"
@@ -129,13 +129,13 @@ var @mfe 0
     
     :: Grabs Count
     read "> " ?count
-    try "int count ?count" "var count 0"
-    if (count < 0) "var count 0"
+    try "int count ?count" "set count 0"
+    if (count < 0) "set count 0"
     
     :: Parses Count
     prt "---"
     mul count 100000 ?price
-    var goos @goos
+    set goos @goos
     if (price > goos and count > 0) "prt 'Not enough goos!'" "jmp shopPurchaseMFE count"
 
     :: Grabs Confirmation
@@ -145,15 +145,15 @@ var @mfe 0
     ret
 
 :: Purchases MFE
-:shopPurchaseMFE count
+:func shopPurchaseMFE (count)
     :: Purchases MFE
     add @mfe count ?mfe
-    var @mfe mfe
+    set @mfe mfe
 
     :: Deduces Goos
     mul count 100000 ?price
     sub @goos price ?goos
-    var @goos goos
+    set @goos goos
 
     :: Prints Confirmation
     if (count == 0) "prt 'Purchase canceled!'" "prt 'Successfully bought ' count ' MFE(s)!'"
@@ -162,7 +162,7 @@ var @mfe 0
     ret
 
 :: Prompts Load Screen to User
-:loadDataPrompt
+:func loadDataPrompt ()
     :: Prompts
     prt "---"
     prt "Are you sure you want to load from a save file and OVERWRITE your current progress?"
@@ -180,7 +180,7 @@ var @mfe 0
     ret
 
 :: Loads Data
-:loadData
+:func loadData ()
     load "save.goos" ?data
     
     :: Locates Separator : "10|11|12|" -> 2
@@ -190,7 +190,7 @@ var @mfe 0
     sub index 1 ?end
     chr data 0 end ?output
     int output ?output
-    var @bread output
+    set @bread output
     
     :: Finds Index of Next Character in Data : "10|11|12|" -> 3
     add index 1 ?dataStart
@@ -207,7 +207,7 @@ var @mfe 0
     sub index 1 ?end
     chr data 0 end ?output
     int output ?output
-    var @goos output
+    set @goos output
     add index 1 ?dataStart
     len data ?dataLength
     sub dataLength 1 ?dataEnd
@@ -218,7 +218,7 @@ var @mfe 0
     sub index 1 ?end
     chr data 0 end ?output
     int output ?output
-    var @mfe output
+    set @mfe output
     add index 1 ?dataStart
     len data ?dataLength
     sub dataLength 1 ?dataEnd
@@ -228,7 +228,7 @@ var @mfe 0
     ret
 
 :: Prompts Save Screen to User
-:saveDataPrompt
+:func saveDataPrompt ()
     :: Prompts
     prt "---"
     prt "Are you sure you want to save your progress and OVERWRITE your current save file?"
@@ -245,7 +245,7 @@ var @mfe 0
     ret
 
 :: Saves Data
-:saveData
+:func saveData ()
     :: Stringifies Data
     str @bread ?bread
     str @goos ?goos
@@ -265,7 +265,7 @@ var @mfe 0
     ret
 
 :: Prompts Quit Screen to User
-:quitGamePrompt
+:func quitGamePrompt ()
     :: Prompts
     prt "---"
     prt "Are you sure you want to quit?"
@@ -284,7 +284,7 @@ var @mfe 0
     ret
 
 :: Quits Game Without Saving Data
-:quitGameExit
+:func quitGameExit ()
     :: Exits
     exit
 
@@ -292,7 +292,7 @@ var @mfe 0
     ret
 
 :: Saves Data and Quits Game
-:quitGameSave
+:func quitGameSave ()
     :: Saves Data
     jmp saveData
 
@@ -303,7 +303,7 @@ var @mfe 0
     ret
 
 :: Main Function
-:game
+:func game ()
     :: Prompts Welcome Screen
     cls
     prt "\x1b[94mIdle Goos\x1b[0m"
