@@ -21,9 +21,9 @@ class InvalidSyntax(Exception):
     pass
 
 # Exported functions
-blocks_start, blocks_end = ["{", "(", "\"", "'", "["], ["}", ")", "\"", "'", "]"]
+literals = {"true": True, "false": False, "none": None}
 
-def typehint_tokens(tokens: List[str], ignore_operators: bool = False) -> List[Tuple[str, Any]]:
+def typehint_tokens(tokens: List[str], ignore_operators: bool = False, active: bool = True) -> List[Tuple[str, Any]]:
     hinted_tokens = []
     for index, token in enumerate(tokens):
         if token.lstrip("-").isnumeric():
@@ -35,6 +35,9 @@ def typehint_tokens(tokens: List[str], ignore_operators: bool = False) -> List[T
         elif re.match(REGX_GROUP_FLOAT, token):
             hinted_tokens.append(("lit", float(token)))
 
+        elif token in literals:
+            hinted_tokens.append(("lit", literals[token]))
+
         else:
             object_match = re.match(REGX_GROUP_OCALL, token)
             if object_match is not None:
@@ -43,20 +46,24 @@ def typehint_tokens(tokens: List[str], ignore_operators: bool = False) -> List[T
             else:
                 match token[0]:
                     case "{" | "(":
+                        is_expr = hinted_tokens[0][1].__name__ == "operator_if" if hinted_tokens else False
                         hinted_tokens.append((
                             "ref",
                             typehint_tokens(
                                 tokenize(token[1:][:-1]),
-                                ignore_operators = hinted_tokens[0][1].__name__ == "operator_if")
+                                ignore_operators = ignore_operators if not hinted_tokens else \
+                                    (False if is_expr and index != 1 else (True if is_expr else ignore_operators)),
+                                active = not is_expr
                             )
-                        )
+                        ))
 
                     case _:
                         if index == 0 and not ignore_operators:
-                            if token not in operators:
+                            print(token, tokens)
+                            if token not in operators or not active:
                                 raise InvalidSyntax
                             
-                            hinted_tokens.append(("opr", operators[token]))
+                            hinted_tokens.append(("opr", operators[token], active))
 
                         else:
                             hinted_tokens.append(("ref", token))
@@ -98,8 +105,13 @@ def fetch_tokens_from_file(file: Path) -> dict:
 
             # Save line data
             method_to_add_to = tokens["classes"][active_class or "_global"]["methods"][active_method or "_main"]
+            print("chk", index, content[index - 1].strip())
             if index and content[index - 1].strip() and content[index - 1][-1] == "\\":
-                method_to_add_to["lines"][-1] += typehint_tokens(tokenize(line))
+                print(method_to_add_to["lines"][-1][0][1])
+                method_to_add_to["lines"][-1] += typehint_tokens(
+                    tokenize(line),
+                    active = not method_to_add_to["lines"][-1][0][1].__name__ == "operator_if"
+                )
 
             else:
                 method_to_add_to["lines"].append(typehint_tokens(tokenize(line)))

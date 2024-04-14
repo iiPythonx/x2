@@ -45,7 +45,63 @@ def operator_thw(message: Argument = None) -> None:
 def operator_hlt(delay: Argument) -> None:
     time.sleep(delay.value)
 
+# Handle comparisons
+class ExpressionError(Exception):
+    pass
+
+comparisons = {
+    "==": lambda a, b: a == b,
+    ">=": lambda a, b: a >= b,
+    "<=": lambda a, b: a <= b,
+    "!=": lambda a, b: a != b,
+    "||": lambda a, b: a or b,
+    "&&": lambda a, b: a and b,
+    ">": lambda a, b: a > b,
+    "<": lambda a, b: a < b
+}
+
 @operator("if")
-def operator_if(*args) -> None:
-    from rich import print
-    print(args)
+def operator_if(expression: Argument, branch: Argument, *args) -> None:
+    def evaluate_expression(expr: list) -> Any:
+        if any([isinstance(x[1], list) for x in expr]):
+            object = []
+            for item in expr:
+                if isinstance(item[1], list):
+                    object.append(("lit", evaluate_expression(item[1])))
+
+                else:
+                    object.append(item)
+
+            expr = object
+
+        stack, comp = [], None
+        for index, item in enumerate(expr):
+            if index > 3 or (item[1] in comparisons and index != 1):
+                raise ExpressionError("xpp only supports three-way expressions (value comp value) in its current state")
+
+            elif index == 1:
+                if item[1] not in comparisons:
+                    raise ExpressionError("unknown comparison operator")
+                
+                comp = comparisons[item[1]]
+
+            else:
+                stack.append(item[1] if item[0] == "lit" else Argument(expression.engine, *item).value)
+
+        if len(stack) == 1:
+            return stack[0]
+
+        return comp(*stack)
+
+    expressions = [expression, branch, *args]
+    for expr in [expressions[i:i + 2] for i in range(0, len(expressions), 2)]:
+        if len(expr) == 1:  # This is an else branch
+            print("Need to execute", expr[0].value)
+            break
+
+        elif expr[0].value[0][0] == "opr" or expr[1].value[0][0] == "ref":
+            raise ExpressionError("layout mismatch, statement should be in <condition> <branch> format")
+
+        if evaluate_expression(expr[0].value):
+            print("Need to execute", expr[1].value)
+            break

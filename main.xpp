@@ -1,2 +1,6 @@
 set x 5
-if (x == 5) { prt "hello, world!" }
+set y 6 
+if (x != 5) { prt "option 1" } \
+   (x < 2) { prt "option 2" } \
+   ((x > 6) && none) { prt "option 3" } \
+   ((x != 1) || true) { prt "option 4" }
