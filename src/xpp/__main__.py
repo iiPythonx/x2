@@ -61,10 +61,37 @@ def main() -> None:
     elif not filepath.is_file():
         sys.exit("x++ Exception: no such file")
 
-    tokens = fetch_tokens_from_file(filepath)
+    engine = ExecutionEngine(fetch_tokens_from_file(filepath))
+    try:
+        engine.execute_method()
 
-    engine = ExecutionEngine(tokens)
-    engine.execute_method()
+    except Exception as e:
+        def rprint(text: str) -> None:
+            print(f"\033[31m{text}\033[0m")
+
+        rprint("x++ | Instruction Fault")
+        rprint("────────────────────────────────────────\n")
+
+        for item in engine.stack:
+            item_class, data_line = engine.classes[item["class"]], None
+            target_offset, overall_index = item["offset"] + item.get("index", -1) + 1, 0
+            for index, line in enumerate(item_class["file"].read_text().splitlines()):
+                if not line.strip() or (line.strip() != line and item["method"] == "_main") or line[0] == ":":
+                    continue
+
+                if overall_index == target_offset:
+                    data_line = (index + 1, line.lstrip())
+                    break
+
+                overall_index += 1
+
+            # Log data
+            file = item_class["file"].name
+            location = "the global scope" if item["method"] == "_main" else f"{file.split('.')[0]}.{item['class']}.{item['method']}"
+            rprint(f"File '{file}', line {data_line[0]}, in {location}:")
+            rprint(f"  > {data_line[1]}\n")
+
+        rprint(f"Fault: {e}")
 
 if __name__ == "__main__":  # Don't run twice from setup.py import
     main()

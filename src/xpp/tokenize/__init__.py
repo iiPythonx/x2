@@ -74,10 +74,10 @@ def fetch_tokens_from_file(file: Path) -> dict:
     if cached_path.is_file() and getmtime(cached_path) >= getmtime(file):
         return pickle.loads(cached_path.read_bytes())
 
-    tokens = {"classes": {"_global": {"methods": {"_main": {"lines": [], "args": [], "variables": {}}}, "variables": {}}}}
+    tokens = {"classes": {"_global": {"methods": {"_main": {"lines": [], "args": [], "variables": {}, "offset": 0}}, "variables": {}, "file": file}}}
     active_class, active_method, last_indent = None, None, 0
 
-    content = file.read_text().splitlines()
+    content, modified_index = file.read_text().splitlines(), 0
     for index, raw_line in enumerate(content):
         line = raw_line.lstrip()
         if not line or line[:2] == "::":
@@ -128,7 +128,7 @@ def fetch_tokens_from_file(file: Path) -> dict:
                     if active_class in tokens["classes"]:
                         raise InvalidSyntax
 
-                    tokens["classes"][active_class] = {"methods": {}, "variables": {}}
+                    tokens["classes"][active_class] = {"methods": {}, "variables": {}, "file": file}
 
                 case "func":
                     active_method = groupings[1]
@@ -139,10 +139,12 @@ def fetch_tokens_from_file(file: Path) -> dict:
                     if active_method in class_to_add_to["methods"]:
                         raise InvalidSyntax
 
-                    class_to_add_to["methods"][active_method] = {"lines": [], "args": groupings[2].split(" ") if groupings[2] else [], "variables": {}}
+                    class_to_add_to["methods"][active_method] = {"lines": [], "args": groupings[2].split(" ") if groupings[2] else [], "variables": {}, "offset": modified_index}
 
         # Continue
         last_indent = indent_level
+        if line[0] != ":":
+            modified_index += 1
 
     cache_location.mkdir(exist_ok = True)
     cached_path.write_bytes(pickle.dumps(tokens))

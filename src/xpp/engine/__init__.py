@@ -17,12 +17,13 @@ class ExecutionEngine():
 
     def execute_method(self, class_: str = "_global", method_: str = "_main", args: List[Any] = []) -> None:
         self.stack.append(self.classes[class_]["methods"][method_])
-        self.stack[-1]["return"] = None
+        self.stack[-1] = self.stack[-1] | {"class": class_, "method": method_, "return": None}
 
         for index, key in enumerate(self.stack[-1]["args"]):
             self.stack[-1]["variables"][key] = args[index]
 
-        for line in self.stack[-1]["lines"]:
+        for idx, line in enumerate(self.stack[-1]["lines"]):
             self.execute_line(line)
+            self.stack[-1]["index"] = idx
 
         return self.stack.pop()["return"]

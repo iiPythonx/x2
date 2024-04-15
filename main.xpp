@@ -1,2 +1,9 @@
-set x 5
-if (x != 5) { prt "option 1" } { prt "option 2" }
+:func ok ()
+    prt "alabama"
+    thw "what the s"
+
+:func test ()
+    prt 'hello world'
+    jmp ok
+
+jmp test
