@@ -1,4 +1,5 @@
 # Copyright (c) 2024 iiPython
+# This file is an absolute nightmare. Rewrite using classes soonish?
 
 # Modules
 import re
@@ -22,8 +23,9 @@ class InvalidSyntax(Exception):
 
 # Exported functions
 literals = {"true": True, "false": False, "none": None}
+parse_whitelist = ["if", "whl", "rep", "try"]
 
-def typehint_tokens(tokens: List[str], ignore_operators: bool = False, active: bool = True) -> List[Tuple[str, Any]]:
+def typehint_tokens(tokens: List[str], ignore_operators: bool = False, recursed: bool = False) -> List[Tuple[str, Any]]:
     hinted_tokens = []
     for index, token in enumerate(tokens):
         if token.lstrip("-").isnumeric():
@@ -46,27 +48,24 @@ def typehint_tokens(tokens: List[str], ignore_operators: bool = False, active: b
             else:
                 match token[0]:
                     case "{" | "(":
-                        is_expr = hinted_tokens[0][1].__name__ == "operator_if" if hinted_tokens else False
                         hinted_tokens.append((
                             "ref",
                             typehint_tokens(
                                 tokenize(token[1:][:-1]),
-                                ignore_operators = ignore_operators if not hinted_tokens else \
-                                    (False if is_expr and index != 1 else (True if is_expr else ignore_operators)),
-                                active = not is_expr
+                                ignore_operators,
+                                True
                             )
                         ))
 
                     case _:
-                        if index == 0 and not ignore_operators:
-                            print(token, tokens)
-                            if token not in operators or not active:
+                        if index == 0 and ((not ignore_operators) or not recursed):
+                            if token not in operators:
                                 raise InvalidSyntax
                             
-                            hinted_tokens.append(("opr", operators[token], active))
+                            hinted_tokens.append(("opr", operators[token]))
 
                         else:
-                            hinted_tokens.append(("ref", token))
+                            hinted_tokens.append(("ref", operators.get(token, token) if ignore_operators else token))
 
     return hinted_tokens
 
@@ -104,17 +103,19 @@ def fetch_tokens_from_file(file: Path) -> dict:
                 raise InvalidSyntax
 
             # Save line data
+            tokenized_line = tokenize(line)
             method_to_add_to = tokens["classes"][active_class or "_global"]["methods"][active_method or "_main"]
-            print("chk", index, content[index - 1].strip())
             if index and content[index - 1].strip() and content[index - 1][-1] == "\\":
-                print(method_to_add_to["lines"][-1][0][1])
-                method_to_add_to["lines"][-1] += typehint_tokens(
-                    tokenize(line),
-                    active = not method_to_add_to["lines"][-1][0][1].__name__ == "operator_if"
+                method_to_add_to["lines"][-1] = method_to_add_to["lines"][-1][:-1] + typehint_tokens(
+                    tokenized_line,
+                    ignore_operators = method_to_add_to["lines"][-1][0][1].__name__.split("_")[1] in parse_whitelist
                 )
 
             else:
-                method_to_add_to["lines"].append(typehint_tokens(tokenize(line)))
+                method_to_add_to["lines"].append(typehint_tokens(
+                    tokenized_line,
+                    ignore_operators = tokenized_line[0] in parse_whitelist
+                ))
 
         else:
             groupings = line_match.groups()

@@ -96,12 +96,9 @@ def operator_if(expression: Argument, branch: Argument, *args) -> None:
     expressions = [expression, branch, *args]
     for expr in [expressions[i:i + 2] for i in range(0, len(expressions), 2)]:
         if len(expr) == 1:  # This is an else branch
-            print("Need to execute", expr[0].value)
+            expression.engine.execute_line(expr[0].value)
             break
 
-        elif expr[0].value[0][0] == "opr" or expr[1].value[0][0] == "ref":
-            raise ExpressionError("layout mismatch, statement should be in <condition> <branch> format")
-
-        if evaluate_expression(expr[0].value):
-            print("Need to execute", expr[1].value)
+        elif evaluate_expression(expr[0].value):
+            expression.engine.execute_line(expr[1].value)
             break
