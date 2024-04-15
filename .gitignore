@@ -6,6 +6,7 @@ __pycache__/
 # Hide x++ testing files
 pkgs/*
 !pkgs/stdlib
+main.xpp
 
 # Hide mdbook build
 docs/book/

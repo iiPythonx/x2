@@ -1,9 +1,0 @@
-:func ok ()
-    prt "alabama"
-    thw "what the s"
-
-:func test ()
-    prt 'hello world'
-    jmp ok
-
-jmp test
