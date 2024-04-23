@@ -4,6 +4,7 @@
 import sys
 import json
 import platform
+import traceback
 from pathlib import Path
 
 from . import __version__, fetch_tokens_from_file, ExecutionEngine
@@ -102,6 +103,9 @@ def main() -> None:
 
             rprint("\nClass information", True)
             rprint(json.dumps(engine.classes, default = lambda o: repr(o), indent = 4))
+
+            rprint("\nTraceback", True)
+            rprint("".join(traceback.format_exception(type(e), e, e.__traceback__)))
 
 if __name__ == "__main__":  # Don't run twice from setup.py import
     main()

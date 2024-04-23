@@ -23,7 +23,11 @@ def operator_ret(return_value: Argument) -> Any:
 
 @operator("jmp")
 def operator_jmp(target: Argument, *args: List[Argument]) -> Any:
-    return target.engine.execute_method(method_ = target.name, args = [x.value for x in args])
+    class_, method_ = target.class_, target.name
+    if "." in target.name:
+        class_, method_ = target.name.split(".")
+
+    return target.engine.execute_method(class_, method_, [x.value for x in args])
 
 @operator("ext")
 def operator_ext(code: Argument = None) -> None:
