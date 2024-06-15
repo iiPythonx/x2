@@ -32,12 +32,12 @@ def operator_pow(*args: List[Argument]) -> int | float:
 
 @operator("inc")
 def operator_inc(object: Argument) -> int | float:
-    object.value += 1
+    object.set(object.value + 1)
     return object.value
 
 @operator("dec")
 def operator_dec(object: Argument) -> int | float:
-    object.value -= 1
+    object.set(object.value - 1)
     return object.value
 
 @operator("rng")
@@ -46,5 +46,5 @@ def operator_rng(min: Argument, max: Argument) -> int:
 
 @operator("rnd")
 def operator_rnd(object: Argument, places: Argument = None) -> int | float:
-    object.value = round(object.value, places and places.value)
+    object.set(round(object.value, places and places.value))
     return object.value

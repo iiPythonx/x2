@@ -60,6 +60,7 @@ def typehint_tokens(tokens: List[str], ignore_operators: bool = False, recursed:
                     case _:
                         if index == 0 and ((not ignore_operators) or not recursed):
                             if token not in operators:
+                                print(token)
                                 raise InvalidSyntax
                             
                             hinted_tokens.append(("opr", operators[token]))

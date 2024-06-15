@@ -64,3 +64,28 @@ def operator_if(expression: Argument, branch: Argument, *args) -> None:
         elif evaluate_expression(engine, expr[0].value):
             engine.execute_line(expr[1].value)
             break
+
+@operator("try")
+def operator_try(expression: Argument, branch: Argument = None) -> None:
+    engine = expression.engine
+    if branch is None:
+        engine.execute_line(expression.value)
+
+    else:
+        try:
+            engine.execute_line(expression.value)
+
+        except Exception:
+            engine.execute_line(branch.value)
+
+@operator("rep")
+def operator_rep(amount: Argument, expression: Argument) -> None:
+    for _ in range(amount.value):
+        amount.engine.execute_line(expression.value)
+
+@operator("whl")
+def operator_whl(expression: Argument, branch: Argument) -> None:
+    engine = expression.engine
+    while evaluate_expression(engine, expression.value):
+        expression.engine.execute_line(branch.value)
+        expression.refresh()

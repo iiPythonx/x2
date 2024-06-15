@@ -10,7 +10,10 @@ from xpp.operators import operator
 # Handle operators
 @operator("prt")
 def operator_prt(*args: List[Argument]) -> None:
-    print(*args)
+    print(
+        *[str(a.value).encode("latin-1", "backslashreplace").decode("unicode-escape") for a in args],
+        sep = ""
+    )
 
 @operator("set")
 def operator_set(variable: Argument, data: Argument) -> None:
@@ -48,3 +51,7 @@ def operator_thw(message: Argument = None) -> None:
 @operator("hlt")
 def operator_hlt(delay: Argument) -> None:
     time.sleep(delay.value)
+
+@operator("rem")
+def operator_rem(variable: Argument) -> None:
+    variable.remove()

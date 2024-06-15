@@ -1,0 +1,2782 @@
+{
+  "_global": {
+    "methods": {
+      "_main": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@bread"
+            ],
+            [
+              "lit",
+              0
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@goos"
+            ],
+            [
+              "lit",
+              0
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@mfe"
+            ],
+            [
+              "lit",
+              0
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_jmp at 0x746a0bf7da80>"
+            ],
+            [
+              "ref",
+              "game"
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 0
+      },
+      "loop": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_cls at 0x746a0bf7dbc0>"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Bread: \\x1b[93m"
+            ],
+            [
+              "ref",
+              "@bread"
+            ],
+            [
+              "lit",
+              "\\x1b[0m | Goos: \\x1b[93m"
+            ],
+            [
+              "ref",
+              "@goos"
+            ],
+            [
+              "lit",
+              "\\x1b[0m | MFE: \\x1b[93m"
+            ],
+            [
+              "ref",
+              "@mfe"
+            ],
+            [
+              "lit",
+              "\\x1b[0m"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Press \\x1b[93m[enter]\\x1b[0m to gain bread!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "You can purchase more goos or MFEs by entering the \\x1b[93m[shop]\\x1b[0m."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Additionally, you can \\x1b[93m[save]\\x1b[0m your progress or \\x1b[93m[load]\\x1b[0m from an existing save."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "If you need to leave, you can also \\x1b[93m[quit]\\x1b[0m."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "command"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_inp at 0x746a0bf7dc60>"
+                ],
+                [
+                  "lit",
+                  "> "
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "command"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  ""
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "incrementBread"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "command"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "shop"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "shopMenuPrompt"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "command"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "load"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "loadDataPrompt"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "command"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "save"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "saveDataPrompt"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "command"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "quit"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "quitGamePrompt"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 3
+      },
+      "incrementBread": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "bread"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_mul at 0x746a0bf7f920>"
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "opr",
+                      "<function operator_add at 0x746a0bf7dee0>"
+                    ],
+                    [
+                      "ref",
+                      "@goos"
+                    ],
+                    [
+                      "lit",
+                      1
+                    ]
+                  ]
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "opr",
+                      "<function operator_add at 0x746a0bf7dee0>"
+                    ],
+                    [
+                      "ref",
+                      "@mfe"
+                    ],
+                    [
+                      "lit",
+                      1
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@bread"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_add at 0x746a0bf7dee0>"
+                ],
+                [
+                  "ref",
+                  "@bread"
+                ],
+                [
+                  "ref",
+                  "bread"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 17
+      },
+      "shopMenuPrompt": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "What would you like to purchase today?"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "\\x1b[93m[1]\\x1b[0m Goos (1,000 Bread)"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "\\tIncreases your bread production!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "\\x1b[93m[2]\\x1b[0m MFE (100,000 Goos)"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "\\tGenerates more bread on the fly!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter the number in square brackets to purchase your item!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter anything else to cancel purchase."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ],
+            [
+              "ref",
+              "?selection"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "selection"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "1"
+                ]
+              ]
+            ],
+            [
+              "lit",
+              "jmp shopMenuGoos"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "selection"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "2"
+                ]
+              ]
+            ],
+            [
+              "lit",
+              "jmp shopMenuMFE"
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 19
+      },
+      "shopMenuGoos": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "How many goos would you like to purchase?"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "max"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_div at 0x746a0bf7f9c0>"
+                ],
+                [
+                  "ref",
+                  "@bread"
+                ],
+                [
+                  "lit",
+                  1000
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_int at 0x746a0bf7c360>"
+            ],
+            [
+              "ref",
+              "max"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "You can purchase a maximum of \\x1b[93m"
+            ],
+            [
+              "ref",
+              "max"
+            ],
+            [
+              "lit",
+              "\\x1b[0m goos!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ],
+            [
+              "ref",
+              "?count"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_try at 0x746a0bf90400>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_int at 0x746a0bf7c360>"
+                ],
+                [
+                  "ref",
+                  "count"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_set at 0x746a0bf7d940>"
+                ],
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "ref",
+                  "<"
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_set at 0x746a0bf7d940>"
+                ],
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  [
+                    [
+                      "ref",
+                      [
+                        [
+                          "ref",
+                          "<function operator_mul at 0x746a0bf7f920>"
+                        ],
+                        [
+                          "ref",
+                          "count"
+                        ],
+                        [
+                          "lit",
+                          1000
+                        ]
+                      ]
+                    ],
+                    [
+                      "ref",
+                      ">"
+                    ],
+                    [
+                      "ref",
+                      "@bread"
+                    ]
+                  ]
+                ],
+                [
+                  "ref",
+                  "&&"
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "ref",
+                      "count"
+                    ],
+                    [
+                      "ref",
+                      ">"
+                    ],
+                    [
+                      "lit",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_prt at 0x746a0bf7d8a0>"
+                ],
+                [
+                  "lit",
+                  "Not enough bread!"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "shopPurchaseGoos"
+                ],
+                [
+                  "ref",
+                  "count"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 30
+      },
+      "shopPurchaseGoos": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@goos"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_add at 0x746a0bf7dee0>"
+                ],
+                [
+                  "ref",
+                  "@goos"
+                ],
+                [
+                  "ref",
+                  "count"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "price"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_mul at 0x746a0bf7f920>"
+                ],
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "lit",
+                  1000
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@bread"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "@bread"
+                ],
+                [
+                  "ref",
+                  "price"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_prt at 0x746a0bf7d8a0>"
+                ],
+                [
+                  "lit",
+                  "Purchase canceled!"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_prt at 0x746a0bf7d8a0>"
+                ],
+                [
+                  "lit",
+                  "Successfully bought "
+                ],
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "lit",
+                  " goos!"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [
+          "count"
+        ],
+        "variables": {},
+        "offset": 42
+      },
+      "shopMenuMFE": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "How many MFE would you like to purchase?"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "max"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_div at 0x746a0bf7f9c0>"
+                ],
+                [
+                  "ref",
+                  "@goos"
+                ],
+                [
+                  "lit",
+                  100000
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_int at 0x746a0bf7c360>"
+            ],
+            [
+              "ref",
+              "max"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "You can purchase a maximum of \\x1b[93m"
+            ],
+            [
+              "ref",
+              "max"
+            ],
+            [
+              "lit",
+              "\\x1b[0m MFE(s)!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ],
+            [
+              "ref",
+              "?count"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_try at 0x746a0bf90400>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_int at 0x746a0bf7c360>"
+                ],
+                [
+                  "ref",
+                  "count"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_set at 0x746a0bf7d940>"
+                ],
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "ref",
+                  "<"
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_set at 0x746a0bf7d940>"
+                ],
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  [
+                    [
+                      "ref",
+                      [
+                        [
+                          "ref",
+                          "<function operator_mul at 0x746a0bf7f920>"
+                        ],
+                        [
+                          "ref",
+                          "count"
+                        ],
+                        [
+                          "lit",
+                          100000
+                        ]
+                      ]
+                    ],
+                    [
+                      "ref",
+                      ">"
+                    ],
+                    [
+                      "ref",
+                      "@goos"
+                    ]
+                  ]
+                ],
+                [
+                  "ref",
+                  "&&"
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "ref",
+                      "count"
+                    ],
+                    [
+                      "ref",
+                      ">"
+                    ],
+                    [
+                      "lit",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_prt at 0x746a0bf7d8a0>"
+                ],
+                [
+                  "lit",
+                  "Not enough goos!"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "shopPurchaseMFE"
+                ],
+                [
+                  "ref",
+                  "count"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 47
+      },
+      "shopPurchaseMFE": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@mfe"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_add at 0x746a0bf7dee0>"
+                ],
+                [
+                  "ref",
+                  "@mfe"
+                ],
+                [
+                  "ref",
+                  "count"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@goos"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "@goos"
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "opr",
+                      "<function operator_mul at 0x746a0bf7f920>"
+                    ],
+                    [
+                      "ref",
+                      "count"
+                    ],
+                    [
+                      "lit",
+                      100000
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  0
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_prt at 0x746a0bf7d8a0>"
+                ],
+                [
+                  "lit",
+                  "Purchase canceled!"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_prt at 0x746a0bf7d8a0>"
+                ],
+                [
+                  "lit",
+                  "Successfully bought "
+                ],
+                [
+                  "ref",
+                  "count"
+                ],
+                [
+                  "lit",
+                  " MFE(s)!"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [
+          "count"
+        ],
+        "variables": {},
+        "offset": 59
+      },
+      "loadDataPrompt": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Are you sure you want to load from a save file and OVERWRITE your current progress?"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Note: if a save file does not exist, the game may crash!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter \\x1b[93m[y]\\x1b[0m to load."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter anything else to cancel."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ],
+            [
+              "ref",
+              "?confirmation"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "confirmation"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "y"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "loadData"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 63
+      },
+      "loadData": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "data"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function load at 0x746a0bf7d080>"
+                ],
+                [
+                  "lit",
+                  "save.goos"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "index"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_idx at 0x746a0bf90860>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "lit",
+                  "|"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "end"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "index"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "output"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_chr at 0x746a0bf907c0>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "lit",
+                  0
+                ],
+                [
+                  "ref",
+                  "end"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_int at 0x746a0bf7c360>"
+            ],
+            [
+              "ref",
+              "output"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@bread"
+            ],
+            [
+              "ref",
+              "output"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataStart"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_add at 0x746a0bf7dee0>"
+                ],
+                [
+                  "ref",
+                  "index"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataLength"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_len at 0x746a0bf90900>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataEnd"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "dataLength"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "data"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_chr at 0x746a0bf907c0>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "ref",
+                  "dataStart"
+                ],
+                [
+                  "ref",
+                  "dataEnd"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "index"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_idx at 0x746a0bf90860>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "lit",
+                  "|"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "end"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "index"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "output"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_chr at 0x746a0bf907c0>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "lit",
+                  0
+                ],
+                [
+                  "ref",
+                  "end"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_int at 0x746a0bf7c360>"
+            ],
+            [
+              "ref",
+              "output"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@goos"
+            ],
+            [
+              "ref",
+              "output"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataStart"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_add at 0x746a0bf7dee0>"
+                ],
+                [
+                  "ref",
+                  "index"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataLength"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_len at 0x746a0bf90900>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataEnd"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "dataLength"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "data"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_chr at 0x746a0bf907c0>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "ref",
+                  "dataStart"
+                ],
+                [
+                  "ref",
+                  "dataEnd"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "index"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_idx at 0x746a0bf90860>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "lit",
+                  "|"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "end"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "index"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "output"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_chr at 0x746a0bf907c0>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "lit",
+                  0
+                ],
+                [
+                  "ref",
+                  "end"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_int at 0x746a0bf7c360>"
+            ],
+            [
+              "ref",
+              "output"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "@mfe"
+            ],
+            [
+              "ref",
+              "output"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataStart"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_add at 0x746a0bf7dee0>"
+                ],
+                [
+                  "ref",
+                  "index"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataLength"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_len at 0x746a0bf90900>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "dataEnd"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_sub at 0x746a0bf7f880>"
+                ],
+                [
+                  "ref",
+                  "dataLength"
+                ],
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "data"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_chr at 0x746a0bf907c0>"
+                ],
+                [
+                  "ref",
+                  "data"
+                ],
+                [
+                  "ref",
+                  "dataStart"
+                ],
+                [
+                  "ref",
+                  "dataEnd"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 70
+      },
+      "saveDataPrompt": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Are you sure you want to save your progress and OVERWRITE your current save file?"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter \\x1b[93m[y]\\x1b[0m to save."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter anything else to cancel."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ],
+            [
+              "ref",
+              "?confirmation"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "confirmation"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "y"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "saveData"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 98
+      },
+      "saveData": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "bread"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_str at 0x746a0bf63c40>"
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "opr",
+                      "<function operator_add at 0x746a0bf7dee0>"
+                    ],
+                    [
+                      "ref",
+                      "@bread"
+                    ],
+                    [
+                      "lit",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "ref",
+              "::"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "goos"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_str at 0x746a0bf63c40>"
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "opr",
+                      "<function operator_add at 0x746a0bf7dee0>"
+                    ],
+                    [
+                      "ref",
+                      "@goos"
+                    ],
+                    [
+                      "lit",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ],
+            [
+              "ref",
+              "::"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "mfe"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_str at 0x746a0bf63c40>"
+                ],
+                [
+                  "ref",
+                  [
+                    [
+                      "opr",
+                      "<function operator_add at 0x746a0bf7dee0>"
+                    ],
+                    [
+                      "ref",
+                      "@mfe"
+                    ],
+                    [
+                      "lit",
+                      0
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_set at 0x746a0bf7d940>"
+            ],
+            [
+              "ref",
+              "data"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "opr",
+                  "<function operator_add at 0x746a0bf7dee0>"
+                ],
+                [
+                  "ref",
+                  "bread"
+                ],
+                [
+                  "lit",
+                  "|"
+                ],
+                [
+                  "ref",
+                  "goos"
+                ],
+                [
+                  "lit",
+                  "|"
+                ],
+                [
+                  "ref",
+                  "mfe"
+                ],
+                [
+                  "lit",
+                  "|"
+                ]
+              ]
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function save at 0x746a0bf7d120>"
+            ],
+            [
+              "lit",
+              "save.goos"
+            ],
+            [
+              "ref",
+              "data"
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 104
+      },
+      "quitGamePrompt": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "---"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Are you sure you want to quit?"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter \\x1b[93m[y]\\x1b[0m to save and quit."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter \\x1b[93m[q]\\x1b[0m to quit without saving."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Enter anything else to cancel."
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ],
+            [
+              "ref",
+              "?confirmation"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_if at 0x746a0bf90360>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "confirmation"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "y"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "quitGameSave"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "confirmation"
+                ],
+                [
+                  "ref",
+                  "=="
+                ],
+                [
+                  "lit",
+                  "q"
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "quitGameExit"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 109
+      },
+      "quitGameExit": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_ext at 0x746a0bf7db20>"
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 117
+      },
+      "quitGameSave": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_jmp at 0x746a0bf7da80>"
+            ],
+            [
+              "ref",
+              "saveData"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_ext at 0x746a0bf7db20>"
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 118
+      },
+      "game": {
+        "lines": [
+          [
+            [
+              "opr",
+              "<function operator_cls at 0x746a0bf7dbc0>"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "\\x1b[94mIdle Goos\\x1b[0m"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "Press \\x1b[93m[enter]\\x1b[0m to start!"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              ""
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "\\x1b[90mMade with \\x1b[91mLove\\x1b[90m and \\x1b[93mBread\\x1b[90m by DmmD @ 2023\\x1b[0m"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_prt at 0x746a0bf7d8a0>"
+            ],
+            [
+              "lit",
+              "\\x1b[90mversion demo.1\\x1b[0m"
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_inp at 0x746a0bf7dc60>"
+            ],
+            [
+              "lit",
+              "> "
+            ]
+          ],
+          [
+            [
+              "opr",
+              "<function operator_whl at 0x746a0bf90540>"
+            ],
+            [
+              "ref",
+              [
+                [
+                  "lit",
+                  1
+                ]
+              ]
+            ],
+            [
+              "ref",
+              [
+                [
+                  "ref",
+                  "<function operator_jmp at 0x746a0bf7da80>"
+                ],
+                [
+                  "ref",
+                  "loop"
+                ]
+              ]
+            ]
+          ]
+        ],
+        "args": [],
+        "variables": {},
+        "offset": 120
+      }
+    },
+    "variables": {},
+    "file": "PosixPath('idlegoos.xpp')"
+  }
+}

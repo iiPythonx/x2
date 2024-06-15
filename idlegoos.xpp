@@ -35,24 +35,8 @@ set @mfe 0
 
 :: Increments Bread Counter
 :func incrementBread ()
-
-    :: Sets Base Multiplier
-    add @mfe 1 ?mfe
-
-    :: Sets Base Increment
-    add @goos 1 ?goos
-
-    :: Applies Multiplier
-    mul goos mfe ?bread
-
-    :: Increments Counter
-    add @bread bread ?total
-
-    :: Updates Counter
-    set @bread total
-
-    :: Returns
-    ret
+    set bread (mul (add @goos 1) (add @mfe 1))
+    set @bread (add @bread bread)
 
 :: Prompts Shop Menu to User
 :func shopMenuPrompt ()
@@ -67,100 +51,78 @@ set @mfe 0
     prt "Enter anything else to cancel purchase."
 
     :: Grabs Selection
-    read "> " ?selection
+    inp "> " ?selection
 
     :: Parses Selection
     if (selection == "1") "jmp shopMenuGoos"
     if (selection == "2") "jmp shopMenuMFE"
-    
-    :: Returns
-    ret
 
 :: Prompts Goos Purchase Menu to User
 :func shopMenuGoos ()
     :: Prompts
     prt "---"
     prt "How many goos would you like to purchase?"
-    div @bread 1000 ?max
-    int max ?max
+    set max (div @bread 1000)
+    int max
     prt "You can purchase a maximum of \x1b[93m" max "\x1b[0m goos!"
     
     :: Grabs Count
-    read "> " ?count
-    try "int count ?count" "set count 0"
-    if (count < 0) "set count 0"
-    
+    inp "> " ?count
+    try { int count } { set count 0 }
+    if (count < 0) { set count 0 }
+
     :: Parses Count
     prt "---"
-    mul count 1000 ?price
-    set bread @bread
-    if (price > bread and count > 0) "prt 'Not enough bread!'" "jmp shopPurchaseGoos count"
+    if (((mul count 1000) > @bread) && (count > 0)) { prt "Not enough bread!" } \
+                                                    { jmp shopPurchaseGoos count }
 
-    :: Grabs Confirmation
-    read "> "
-
-    :: Returns
-    ret
+    inp "> "
 
 :: Purchases Goos
 :func shopPurchaseGoos (count)
     :: Purchases Goos
-    add @goos count ?goos
-    set @goos goos
+    set @goos (add @goos count)
 
     :: Deduces Bread
-    mul count 1000 ?price
-    sub @bread price ?bread
-    set @bread bread
+    set price (mul count 1000)
+    set @bread (sub @bread price)
 
     :: Prints Confirmation
-    if (count == 0) "prt 'Purchase canceled!'" "prt 'Successfully bought ' count ' goos!'"
-
-    :: Returns
-    ret
+    if (count == 0) { prt "Purchase canceled!" } \
+                    { prt "Successfully bought " count " goos!" }
 
 :: Prompts MFE Purchase Menu to User
 :func shopMenuMFE ()
     :: Prompts
     prt "---"
     prt "How many MFE would you like to purchase?"
-    div @goos 100000 ?max
-    int max ?max
+    set max (div @goos 100000)
+    int max
     prt "You can purchase a maximum of \x1b[93m" max "\x1b[0m MFE(s)!"
     
     :: Grabs Count
-    read "> " ?count
-    try "int count ?count" "set count 0"
-    if (count < 0) "set count 0"
+    inp "> " ?count
+    try { int count } { set count 0 }
+    if (count < 0) { set count 0 }
     
     :: Parses Count
     prt "---"
-    mul count 100000 ?price
-    set goos @goos
-    if (price > goos and count > 0) "prt 'Not enough goos!'" "jmp shopPurchaseMFE count"
+    if (((mul count 100000) > @goos) && (count > 0)) { prt "Not enough goos!" } \
+                                                     { jmp shopPurchaseMFE count }
 
-    :: Grabs Confirmation
-    read "> "
-
-    :: Returns
-    ret
+    inp "> "
 
 :: Purchases MFE
 :func shopPurchaseMFE (count)
     :: Purchases MFE
-    add @mfe count ?mfe
-    set @mfe mfe
+    set @mfe (add @mfe count)
 
     :: Deduces Goos
-    mul count 100000 ?price
-    sub @goos price ?goos
-    set @goos goos
+    set @goos (sub @goos (mul count 100000))
 
     :: Prints Confirmation
-    if (count == 0) "prt 'Purchase canceled!'" "prt 'Successfully bought ' count ' MFE(s)!'"
-
-    :: Returns
-    ret
+    if (count == 0) { prt "Purchase canceled!" } \
+                    { prt "Successfully bought " count " MFE(s)!" }
 
 :: Prompts Load Screen to User
 :func loadDataPrompt ()
@@ -172,61 +134,55 @@ set @mfe 0
     prt "Enter anything else to cancel."
 
     :: Grabs Confirmation
-    read "> " ?confirmation
+    inp "> " ?confirmation
 
     :: Parses Confirmation
-    if (confirmation == "y") "jmp loadData"
-
-    :: Returns
-    ret
+    if (confirmation == "y") { jmp loadData }
 
 :: Loads Data
 :func loadData ()
-    load "save.goos" ?data
+    set data (load "save.goos")
     
     :: Locates Separator : "10|11|12|" -> 2
-    idx data "|" ?index
+    set index (idx data "|")
     
     :: Parses Number : "10|11|12" -> "10"
-    sub index 1 ?end
-    chr data 0 end ?output
-    int output ?output
+    set end (sub index 1)
+    set output (chr data 0 end)
+    int output
     set @bread output
     
     :: Finds Index of Next Character in Data : "10|11|12|" -> 3
-    add index 1 ?dataStart
+    set dataStart (add index 1)
     
     :: Finds Index of Last Character in Data : "10|11|12|" -> 8
-    len data ?dataLength
-    sub dataLength 1 ?dataEnd
+    set dataLength (len data)
+    set dataEnd (sub dataLength 1)
 
     :: Slices Data : "10|11|12|" -> "11|12|"
-    chr data dataStart dataEnd ?data
+    set data (chr data dataStart dataEnd)
 
     :: Same As Above
-    idx data "|" ?index
-    sub index 1 ?end
-    chr data 0 end ?output
-    int output ?output
+    set index (idx data "|")
+    set end (sub index 1)
+    set output (chr data 0 end)
+    int output
     set @goos output
-    add index 1 ?dataStart
-    len data ?dataLength
-    sub dataLength 1 ?dataEnd
-    chr data dataStart dataEnd ?data
+    set dataStart (add index 1)
+    set dataLength (len data)
+    set dataEnd (sub dataLength 1)
+    set data (chr data dataStart dataEnd)
 
     :: Same As Above
-    idx data "|" ?index
-    sub index 1 ?end
-    chr data 0 end ?output
-    int output ?output
+    set index (idx data "|")
+    set end (sub index 1)
+    set output (chr data 0 end)
+    int output
     set @mfe output
-    add index 1 ?dataStart
-    len data ?dataLength
-    sub dataLength 1 ?dataEnd
-    chr data dataStart dataEnd ?data
-
-    :: Returns
-    ret
+    set dataStart (add index 1)
+    set dataLength (len data)
+    set dataEnd (sub dataLength 1)
+    set data (chr data dataStart dataEnd)
 
 :: Prompts Save Screen to User
 :func saveDataPrompt ()
@@ -237,33 +193,29 @@ set @mfe 0
     prt "Enter anything else to cancel."
 
     :: Grabs Confirmation
-    read "> " ?confirmation
+    inp "> " ?confirmation
 
     :: Parses Confirmation
-    if (confirmation == "y") "jmp saveData"
-
-    :: Returns
-    ret
+    if (confirmation == "y") { jmp saveData }
 
 :: Saves Data
 :func saveData ()
     :: Stringifies Data
-    str @bread ?bread
-    str @goos ?goos
-    str @mfe ?mfe
+    set bread (str (add @bread 0))  :: Hack to prevent str from stringifying the globals
+    set goos (str (add @goos 0))    :: - iiPython
+    set mfe (str (add @mfe 0))
 
     :: Appends Data
-    add bread "|" ?data
-    add data goos ?data
-    add data "|" ?data
-    add data mfe ?data
-    add data "|" ?data
+    set data (add bread "|" goos "|" mfe "|")
+
+    ::  set data (add bread "|")
+    ::  set data (add data goos)
+    ::  set data (add data "|")
+    ::  set data (add data mfe)
+    ::  set data (add data "|")
 
     :: Saves Data
     save "save.goos" data
-
-    :: Returns
-    ret
 
 :: Prompts Quit Screen to User
 :func quitGamePrompt ()
@@ -275,33 +227,20 @@ set @mfe 0
     prt "Enter anything else to cancel."
 
     :: Grabs Confirmation
-    read "> " ?confirmation
+    inp "> " ?confirmation
 
     :: Parses Confirmation
-    if (confirmation == "y") "jmp quitGameSave"
-    if (confirmation == "q") "jmp quitGameExit"
-
-    :: Returns
-    ret
+    if (confirmation == "y") { jmp quitGameSave } \
+       (confirmation == "q") { jmp quitGameExit }
 
 :: Quits Game Without Saving Data
 :func quitGameExit ()
-    :: Exits
-    exit
-
-    :: Returns
-    ret
+    ext
 
 :: Saves Data and Quits Game
 :func quitGameSave ()
-    :: Saves Data
     jmp saveData
-
-    :: Exits
-    exit
-
-    :: Returns
-    ret
+    ext
 
 :: Main Function
 :func game ()
@@ -312,13 +251,10 @@ set @mfe 0
     prt ""
     prt "\x1b[90mMade with \x1b[91mLove\x1b[90m and \x1b[93mBread\x1b[90m by DmmD @ 2023\x1b[0m"
     prt "\x1b[90mversion demo.1\x1b[0m"
-    read "> "
+    inp "> "
     
     :: Initiates Game Loop
-    whl (1) "jmp loop"
-
-    :: Returns
-    ret
+    whl (1) { jmp loop }
 
 :: Initiates Game
 jmp game

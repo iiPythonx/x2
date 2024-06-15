@@ -68,9 +68,11 @@ def main() -> None:
 
     engine = ExecutionEngine(fetch_tokens_from_file(filepath))
     try:
+        import orjson
+        Path("idlegoos.bin.json").write_bytes(orjson.dumps(engine.classes, default = lambda x: repr(x), option = orjson.OPT_INDENT_2))
         engine.execute_method()
 
-    except Exception as e:
+    except (Exception, KeyboardInterrupt) as e:
         def rprint(text: str, sep: bool = False) -> None:
             print(f"\033[31m{text}\033[0m")
             if sep:

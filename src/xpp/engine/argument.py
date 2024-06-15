@@ -10,9 +10,13 @@ class Argument():
 
         # Handle the variable storage location
         self.target, self.class_ = self.engine.stack[-1]["variables"], "_global"
-        if isinstance(self.name, str) and self.name[0] == ".":
-            self.name, self.class_ = self.name[1:], self.engine.stack[-1]["class"]
-            self.target = self.engine.classes[self.class_]["variables"]
+        if isinstance(self.name, str):
+            if self.name[0] in [".", "@"]:
+                if self.name[0] == ".":
+                    self.class_ = self.engine.stack[-1]["class"]
+
+                self.name = self.name[1:]
+                self.target = self.engine.classes[self.class_]["variables"]
 
         # Engine: the execution engine, self explanatory.
         # Type: "ref", "lit", or "opr". Odds are, it's probably "ref" if Argument() is being called on it.
@@ -36,9 +40,19 @@ class Argument():
     def __repr__(self) -> str:
         return f"<Argument T='{self.type}' N='{self.name}' V={repr(self.value)} />"
 
-    def set(self, value: Any) -> None:
+    def set(self, value: Any) -> Any:
         if isinstance(value, Argument):
             value = value.value
 
         self.value = value
         self.target[self.name] = value
+        return value
+
+    def remove(self) -> None:
+        if self.name in self.target:
+            del self.target[self.name]
+        
+        self.value, self.target = None, None
+
+    def refresh(self) -> None:
+        self.value = self.target.get(self.name)
