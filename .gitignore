@@ -1,18 +1,5 @@
-# Hide cache
-__pycache__/
-.venv/
-.xpp/
-
-# Hide x++ testing files
-pkgs/*
-!pkgs/stdlib
+# Hide xpp testing files
 main.xpp
 
 # Hide mdbook build
 docs/book/
-
-# Everything pip related
-dist/
-build/
-*.egg-info/
-*.egg
