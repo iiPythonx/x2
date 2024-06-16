@@ -27,15 +27,17 @@ class Argument():
         #       1. Operator: [("opr", <operator function>)]
         #       2. Reference: [("ref", [...more of these structure objects])]
         #       3. Literal: [("lit", <int/float/str/bool/bytes/...>)]
-        if self.type != ItemType.COMPARISON:
 
-            # Check that this is a reference (OR an operator):
-            if self.type == ItemType.REFERENCE and not (isinstance(self.value, list) and self.value[0][0] == ItemType.REFERENCE):
-                if isinstance(self.value, list) and self.value[0][0] == ItemType.OPERATOR:
-                    self.name, self.value = None, engine.execute_line(self.value)
+        # if self.type == ItemType.REFERENCE and not 
+        # if self.type != ItemType.COMPARISON and not (isinstance(value, list) and value[0][0] == ItemType.REFERENCE):
 
-                else:
-                    self.set(self.target.get(self.name))
+        # Ensure this is a valid reference (but not an expression)
+        if self.type == ItemType.REFERENCE and not (isinstance(self.value, list) and self.value[0][0] == ItemType.REFERENCE):
+            if isinstance(self.value, list) and self.value[0][0] == ItemType.OPERATOR:
+                self.name, self.value = None, engine.execute_line(self.value)
+
+            else:
+                self.set(self.target.get(self.name))
 
     def __str__(self) -> str:
         return str(self.value)
