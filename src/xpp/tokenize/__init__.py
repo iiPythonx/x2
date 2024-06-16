@@ -3,8 +3,10 @@
 
 # Modules
 import re
+import sys
 import pickle
 from pathlib import Path
+from decimal import Decimal, getcontext
 
 from os.path import getmtime
 from typing import Any, List, Tuple
@@ -28,6 +30,9 @@ class OperatorHandleMode:
     ENABLED     = 1
     REFERENCE   = 2
 
+getcontext().prec = 5
+float_function = float if "--decimal" not in sys.argv else Decimal
+
 # Exported functions
 literals = {"true": True, "false": False, "none": None}
 
@@ -41,7 +46,7 @@ def typehint_tokens(tokens: List[str], opmode: int) -> List[Tuple[str, Any]]:
             hinted_tokens.append((ItemType.LITERAL, token[1:][:-1]))
 
         elif re.match(REGX_GROUP_FLOAT, token):
-            hinted_tokens.append((ItemType.LITERAL, float(token)))
+            hinted_tokens.append((ItemType.LITERAL, float_function(token)))
 
         elif token in literals:
             hinted_tokens.append((ItemType.LITERAL, literals[token]))

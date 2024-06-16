@@ -1,4 +1,4 @@
-# Copyright 2022-2024 iiPython
+# Copyright (c) 2022-2024 iiPython
 
 # Modules
 import sys
@@ -18,7 +18,8 @@ class CLI(object):
             {"args": ["-hl", "--long"], "fn": self.show_help_long, "desc": "Displays a more detailed help menu"},
             {"args": ["-v", "--version"], "fn": self.show_version, "desc": "Prints the x++ version"},
             {"args": ["-d", "--debug"], "desc": "Enables debug logging on faults"},
-            {"args": ["-t", "--tokens"], "desc": "Generate an xpp token file and exit"}
+            {"args": ["-t", "--tokens"], "desc": "Generate an xpp token file and exit"},
+            {"args": ["--decimal"], "desc": "Enable decimal precision mode"}
         ]
         self.usage = f"""x++ (x{__version__})
 (c) 2021-24 iiPython; (c) 2022-23 Dm123321_31mD "DmmD" Gaming
