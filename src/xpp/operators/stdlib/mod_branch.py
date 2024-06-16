@@ -4,6 +4,7 @@
 from typing import Any
 
 from xpp.engine import Argument
+from xpp.engine.types import ItemType
 from xpp.operators import operator
 
 # Initialization
@@ -25,11 +26,14 @@ def evaluate_expression(engine: object, expr: list) -> Any:
     if any([isinstance(x[1], list) for x in expr]):
         object = []
         for item in expr:
-            if isinstance(item[1], list):
-                object.append(("lit", evaluate_expression(item[1])))
+            if not isinstance(item[1], list):
+                object.append(item)
+
+            elif item[1][0][0] == ItemType.OPERATOR:
+                object.append((ItemType.LITERAL, engine.execute_line(item[1])))
 
             else:
-                object.append(item)
+                object.append((ItemType.LITERAL, evaluate_expression(engine, item[1])))
 
         expr = object
 
@@ -41,11 +45,11 @@ def evaluate_expression(engine: object, expr: list) -> Any:
         elif index == 1:
             if item[1] not in comparisons:
                 raise ExpressionError("unknown comparison operator")
-            
+
             comp = comparisons[item[1]]
 
         else:
-            stack.append(item[1] if item[0] == "lit" else Argument(engine, *item).value)
+            stack.append(item[1] if item[0] == ItemType.LITERAL else Argument(engine, *item).value)
 
     if len(stack) == 1:
         return stack[0]
@@ -88,4 +92,3 @@ def operator_whl(expression: Argument, branch: Argument) -> None:
     engine = expression.engine
     while evaluate_expression(engine, expression.value):
         expression.engine.execute_line(branch.value)
-        expression.refresh()

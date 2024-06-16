@@ -10,6 +10,8 @@ from os.path import getmtime
 from typing import Any, List, Tuple
 
 from xpp.operators import operators
+from xpp.engine.types import ItemType
+
 from .tokenizer import tokenize
 from .expressions import REGX_GROUP_CLASS, REGX_GROUP_FUNCT, REGX_GROUP_OCALL, REGX_GROUP_FLOAT
 
@@ -21,24 +23,30 @@ configured_indent = " " * 4  # 4 spaces OR \t
 class InvalidSyntax(Exception):
     pass
 
+# Rewrite portions
+class OperatorHandleMode:
+    ENABLED     = 1
+    REFERENCE   = 3
+
 # Exported functions
 literals = {"true": True, "false": False, "none": None}
-parse_whitelist = ["if", "whl", "rep", "try"]
+# parse_whitelist = ["if", "whl", "rep", "try"]
 
-def typehint_tokens(tokens: List[str], ignore_operators: bool = False, recursed: bool = False) -> List[Tuple[str, Any]]:
+def typehint_tokens(tokens: List[str], opmode: int) -> List[Tuple[str, Any]]:
+    # print("[Typehint]", tokens, "OpMode:", opmode)
     hinted_tokens = []
     for index, token in enumerate(tokens):
         if token.lstrip("-").isnumeric():
-            hinted_tokens.append(("lit", int(token)))
+            hinted_tokens.append((ItemType.LITERAL, int(token)))
 
         elif token[0] in ["\"", "'"]:
-            hinted_tokens.append(("lit", token[1:][:-1]))
+            hinted_tokens.append((ItemType.LITERAL, token[1:][:-1]))
 
         elif re.match(REGX_GROUP_FLOAT, token):
-            hinted_tokens.append(("lit", float(token)))
+            hinted_tokens.append((ItemType.LITERAL, float(token)))
 
         elif token in literals:
-            hinted_tokens.append(("lit", literals[token]))
+            hinted_tokens.append((ItemType.LITERAL, literals[token]))
 
         else:
             object_match = re.match(REGX_GROUP_OCALL, token)
@@ -47,32 +55,49 @@ def typehint_tokens(tokens: List[str], ignore_operators: bool = False, recursed:
 
             else:
                 match token[0]:
-                    case "{" | "(":
-                        hinted_tokens.append((
-                            "ref",
-                            typehint_tokens(
-                                tokenize(token[1:][:-1]),
-                                ignore_operators,
-                                True
-                            )
-                        ))
+                    case "{":
+                        hinted_tokens.append((ItemType.REFERENCE, typehint_tokens(
+                            tokenize(token[1:][:-1]),
+                            OperatorHandleMode.REFERENCE
+                        )))
 
-                    case _:
-                        if index == 0 and ((not ignore_operators) or not recursed):
-                            if token not in operators:
-                                print(token)
-                                raise InvalidSyntax
-                            
-                            hinted_tokens.append(("opr", operators[token]))
+                    case "(":
+                        token_data = typehint_tokens(
+                            tokenize(token[1:][:-1]),
+                            OperatorHandleMode.ENABLED
+                        )
+
+                        # This is unideal, but it's the best way I can come up with right now.
+                        if len(token_data) == 3 and all([
+                            token_data[0][0] in [ItemType.LITERAL, ItemType.REFERENCE, ItemType.COMPARISON],
+                            token_data[1][0] == ItemType.REFERENCE,
+                            token_data[2][0] in [ItemType.LITERAL, ItemType.REFERENCE, ItemType.COMPARISON]
+                        ]):
+                            hinted_tokens.append((ItemType.COMPARISON, token_data))
 
                         else:
-                            hinted_tokens.append(("ref", operators.get(token, token) if ignore_operators else token))
+                            hinted_tokens.append((ItemType.REFERENCE, token_data))
+
+                    case _:
+                        if index == 0 and token in operators:  # and opmode != OperatorHandleMode.DISABLED:
+                            if opmode == OperatorHandleMode.ENABLED:
+                                hinted_tokens.append((ItemType.OPERATOR, operators[token]))
+                                continue
+
+                            elif opmode == OperatorHandleMode.REFERENCE:
+                                hinted_tokens.append((ItemType.REFERENCE, operators[token]))
+                                continue
+
+                        hinted_tokens.append((
+                            ItemType.REFERENCE,
+                            operators.get(token, token)
+                        ))
 
     return hinted_tokens
 
 def fetch_tokens_from_file(file: Path) -> dict:
     cached_path = cache_location / file.with_suffix(".x")
-    if cached_path.is_file() and getmtime(cached_path) >= getmtime(file):
+    if cached_path.is_file() and getmtime(cached_path) >= getmtime(file) and False:
         return pickle.loads(cached_path.read_bytes())
 
     tokens = {"classes": {"_global": {"methods": {"_main": {"lines": [], "args": [], "variables": {}, "offset": 0}}, "variables": {}, "file": file}}}
@@ -85,6 +110,9 @@ def fetch_tokens_from_file(file: Path) -> dict:
             continue
 
         indent_level = raw_line[:-len(line)].replace(configured_indent, "\t").count("\t")
+        previous_line = (index and content[index - 1]) or ""
+        if previous_line and previous_line[-1] == "\\":
+            indent_level = last_indent
 
         # Check indentation level
         if indent_level < last_indent:
@@ -107,15 +135,18 @@ def fetch_tokens_from_file(file: Path) -> dict:
             tokenized_line = tokenize(line)
             method_to_add_to = tokens["classes"][active_class or "_global"]["methods"][active_method or "_main"]
             if index and content[index - 1].strip() and content[index - 1][-1] == "\\":
+                # ignore_operators = method_to_add_to["lines"][-1][0][1].__name__.split("_")[1] in parse_whitelist
                 method_to_add_to["lines"][-1] = method_to_add_to["lines"][-1][:-1] + typehint_tokens(
                     tokenized_line,
-                    ignore_operators = method_to_add_to["lines"][-1][0][1].__name__.split("_")[1] in parse_whitelist
+                    OperatorHandleMode.ENABLED
+                    # OperatorHandleMode.REFERENCE if ignore_operators else OperatorHandleMode.ENABLED
                 )
 
             else:
                 method_to_add_to["lines"].append(typehint_tokens(
                     tokenized_line,
-                    ignore_operators = tokenized_line[0] in parse_whitelist
+                    OperatorHandleMode.ENABLED
+                    # OperatorHandleMode.REFERENCE if tokenized_line[0] in parse_whitelist else OperatorHandleMode.ENABLED
                 ))
 
         else:

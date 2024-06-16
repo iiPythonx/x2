@@ -49,13 +49,13 @@ set @mfe 0
     prt "\tGenerates more bread on the fly!"
     prt "Enter the number in square brackets to purchase your item!"
     prt "Enter anything else to cancel purchase."
-
+    
     :: Grabs Selection
-    inp "> " ?selection
-
+    set selection (inp "> ")
+    
     :: Parses Selection
-    if (selection == "1") "jmp shopMenuGoos"
-    if (selection == "2") "jmp shopMenuMFE"
+    if (selection == "1") { jmp shopMenuGoos }
+    if (selection == "2") { jmp shopMenuMFE }
 
 :: Prompts Goos Purchase Menu to User
 :func shopMenuGoos ()
@@ -67,7 +67,7 @@ set @mfe 0
     prt "You can purchase a maximum of \x1b[93m" max "\x1b[0m goos!"
     
     :: Grabs Count
-    inp "> " ?count
+    set count (inp "> ")
     try { int count } { set count 0 }
     if (count < 0) { set count 0 }
 
@@ -101,7 +101,7 @@ set @mfe 0
     prt "You can purchase a maximum of \x1b[93m" max "\x1b[0m MFE(s)!"
     
     :: Grabs Count
-    inp "> " ?count
+    set count (inp "> ")
     try { int count } { set count 0 }
     if (count < 0) { set count 0 }
     
@@ -109,7 +109,7 @@ set @mfe 0
     prt "---"
     if (((mul count 100000) > @goos) && (count > 0)) { prt "Not enough goos!" } \
                                                      { jmp shopPurchaseMFE count }
-
+    
     inp "> "
 
 :: Purchases MFE
@@ -134,7 +134,7 @@ set @mfe 0
     prt "Enter anything else to cancel."
 
     :: Grabs Confirmation
-    inp "> " ?confirmation
+    set confirmation (inp "> ")
 
     :: Parses Confirmation
     if (confirmation == "y") { jmp loadData }
@@ -147,42 +147,20 @@ set @mfe 0
     set index (idx data "|")
     
     :: Parses Number : "10|11|12" -> "10"
-    set end (sub index 1)
-    set output (chr data 0 end)
-    int output
-    set @bread output
-    
-    :: Finds Index of Next Character in Data : "10|11|12|" -> 3
-    set dataStart (add index 1)
-    
-    :: Finds Index of Last Character in Data : "10|11|12|" -> 8
-    set dataLength (len data)
-    set dataEnd (sub dataLength 1)
+    set @bread (int (chr data 0 index))
 
     :: Slices Data : "10|11|12|" -> "11|12|"
-    set data (chr data dataStart dataEnd)
+    set data (chr data (add index 1) (len data))
 
     :: Same As Above
     set index (idx data "|")
-    set end (sub index 1)
-    set output (chr data 0 end)
-    int output
-    set @goos output
-    set dataStart (add index 1)
-    set dataLength (len data)
-    set dataEnd (sub dataLength 1)
-    set data (chr data dataStart dataEnd)
+    set @goos (int (chr data 0 index))
+    set data (chr data (add index 1) (len data))
 
     :: Same As Above
     set index (idx data "|")
-    set end (sub index 1)
-    set output (chr data 0 end)
-    int output
-    set @mfe output
-    set dataStart (add index 1)
-    set dataLength (len data)
-    set dataEnd (sub dataLength 1)
-    set data (chr data dataStart dataEnd)
+    set @mfe (int (chr data 0 index))
+    set data (chr data (add index 1) (sub (len data) 1))
 
 :: Prompts Save Screen to User
 :func saveDataPrompt ()
@@ -193,7 +171,7 @@ set @mfe 0
     prt "Enter anything else to cancel."
 
     :: Grabs Confirmation
-    inp "> " ?confirmation
+    set confirmation (inp "> ")
 
     :: Parses Confirmation
     if (confirmation == "y") { jmp saveData }
@@ -208,12 +186,6 @@ set @mfe 0
     :: Appends Data
     set data (add bread "|" goos "|" mfe "|")
 
-    ::  set data (add bread "|")
-    ::  set data (add data goos)
-    ::  set data (add data "|")
-    ::  set data (add data mfe)
-    ::  set data (add data "|")
-
     :: Saves Data
     save "save.goos" data
 
@@ -227,7 +199,7 @@ set @mfe 0
     prt "Enter anything else to cancel."
 
     :: Grabs Confirmation
-    inp "> " ?confirmation
+    set confirmation (inp "> ")
 
     :: Parses Confirmation
     if (confirmation == "y") { jmp quitGameSave } \
@@ -254,7 +226,7 @@ set @mfe 0
     inp "> "
     
     :: Initiates Game Loop
-    whl (1) { jmp loop }
+    whl (1 == 1) { jmp loop }
 
 :: Initiates Game
 jmp game

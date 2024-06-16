@@ -17,7 +17,8 @@ class CLI(object):
             {"args": ["-h", "--help"], "fn": self.show_help, "desc": "Displays the help menu"},
             {"args": ["-hl", "--long"], "fn": self.show_help_long, "desc": "Displays a more detailed help menu"},
             {"args": ["-v", "--version"], "fn": self.show_version, "desc": "Prints the x++ version"},
-            {"args": ["-d", "--debug"], "desc": "Enables debug logging on faults"}
+            {"args": ["-d", "--debug"], "desc": "Enables debug logging on faults"},
+            {"args": ["-t", "--tokens"], "desc": "Generate an xpp token file and exit"}
         ]
         self.usage = f"""x++ (x{__version__})
 (c) 2021-24 iiPython; (c) 2022-23 Dm123321_31mD "DmmD" Gaming
@@ -68,8 +69,15 @@ def main() -> None:
 
     engine = ExecutionEngine(fetch_tokens_from_file(filepath))
     try:
-        import orjson
-        Path("idlegoos.bin.json").write_bytes(orjson.dumps(engine.classes, default = lambda x: repr(x), option = orjson.OPT_INDENT_2))
+        if "-t" in sys.argv or "--tokens" in sys.argv:
+            import orjson
+            Path(filepath.with_suffix(".xpp.json")).write_bytes(orjson.dumps(
+                engine.classes,
+                default = lambda x: repr(x),
+                option = orjson.OPT_INDENT_2
+            ))
+            sys.exit(f"xpp: tokens dumped to {filepath.with_suffix('.xpp.json')}")
+
         engine.execute_method()
 
     except (Exception, KeyboardInterrupt) as e:

@@ -7,6 +7,7 @@ __pycache__/
 pkgs/*
 !pkgs/stdlib
 main.xpp
+*.xpp.json
 
 # Hide mdbook build
 docs/book/

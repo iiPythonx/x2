@@ -3,6 +3,8 @@
 # Modules
 from typing import Any
 
+from .types import ItemType
+
 # Main argument class
 class Argument():
     def __init__(self, engine: object, type_: str, value: Any) -> None:
@@ -11,7 +13,7 @@ class Argument():
         # Handle the variable storage location
         self.target, self.class_ = self.engine.stack[-1]["variables"], "_global"
         if isinstance(self.name, str):
-            if self.name[0] in [".", "@"]:
+            if self.name and self.name[0] in [".", "@"]:
                 if self.name[0] == ".":
                     self.class_ = self.engine.stack[-1]["class"]
 
@@ -25,14 +27,15 @@ class Argument():
         #       1. Operator: [("opr", <operator function>)]
         #       2. Reference: [("ref", [...more of these structure objects])]
         #       3. Literal: [("lit", <int/float/str/bool/bytes/...>)]
+        if self.type != ItemType.COMPARISON:
 
-        # Check that this is a reference (OR an operator):
-        if self.type == "ref" and not (isinstance(self.value, list) and self.value[0][0] == "ref"):
-            if isinstance(self.value, list):
-                self.name, self.value = None, engine.execute_line(self.value)
+            # Check that this is a reference (OR an operator):
+            if self.type == ItemType.REFERENCE and not (isinstance(self.value, list) and self.value[0][0] == ItemType.REFERENCE):
+                if isinstance(self.value, list) and self.value[0][0] == ItemType.OPERATOR:
+                    self.name, self.value = None, engine.execute_line(self.value)
 
-            else:
-                self.set(self.target.get(self.name))
+                else:
+                    self.set(self.target.get(self.name))
 
     def __str__(self) -> str:
         return str(self.value)

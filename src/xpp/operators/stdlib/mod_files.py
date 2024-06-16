@@ -9,8 +9,8 @@ from xpp.operators import operator
 # Handle operators
 @operator("load")
 def load(path: Argument) -> str:
-    return Path(path).read_text()
+    return Path(path.value).read_text()
 
 @operator("save")
 def save(path: Argument, data: Argument) -> None:
-    Path(path).write_text(data.value)
+    Path(path.value).write_text(data.value)

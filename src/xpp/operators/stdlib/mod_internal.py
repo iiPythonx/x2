@@ -15,8 +15,14 @@ def operator_prt(*args: List[Argument]) -> None:
         sep = ""
     )
 
+@operator("out")
+def operator_out(*args: List[Argument]) -> None:
+    print(
+        *[str(a.value).encode("latin-1", "backslashreplace").decode("unicode-escape") for a in args]
+    )
+
 @operator("set")
-def operator_set(variable: Argument, data: Argument) -> None:
+def operator_set(variable: Argument, data: Argument, *args) -> None:
     variable.set(data)
 
 @operator("ret")
