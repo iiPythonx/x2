@@ -26,14 +26,12 @@ class InvalidSyntax(Exception):
 # Rewrite portions
 class OperatorHandleMode:
     ENABLED     = 1
-    REFERENCE   = 3
+    REFERENCE   = 2
 
 # Exported functions
 literals = {"true": True, "false": False, "none": None}
-# parse_whitelist = ["if", "whl", "rep", "try"]
 
 def typehint_tokens(tokens: List[str], opmode: int) -> List[Tuple[str, Any]]:
-    # print("[Typehint]", tokens, "OpMode:", opmode)
     hinted_tokens = []
     for index, token in enumerate(tokens):
         if token.lstrip("-").isnumeric():
@@ -96,8 +94,15 @@ def typehint_tokens(tokens: List[str], opmode: int) -> List[Tuple[str, Any]]:
     return hinted_tokens
 
 def fetch_tokens_from_file(file: Path) -> dict:
+    match file.suffix:
+        case ".json":
+            exit("xpp: unable to read json token files, please use the bytecode format.")
+
+        case ".x":
+            return pickle.loads(file.read_bytes())
+
     cached_path = cache_location / file.with_suffix(".x")
-    if cached_path.is_file() and getmtime(cached_path) >= getmtime(file) and False:
+    if cached_path.is_file() and getmtime(cached_path) >= getmtime(file):
         return pickle.loads(cached_path.read_bytes())
 
     tokens = {"classes": {"_global": {"methods": {"_main": {"lines": [], "args": [], "variables": {}, "offset": 0}}, "variables": {}, "file": file}}}
@@ -135,18 +140,15 @@ def fetch_tokens_from_file(file: Path) -> dict:
             tokenized_line = tokenize(line)
             method_to_add_to = tokens["classes"][active_class or "_global"]["methods"][active_method or "_main"]
             if index and content[index - 1].strip() and content[index - 1][-1] == "\\":
-                # ignore_operators = method_to_add_to["lines"][-1][0][1].__name__.split("_")[1] in parse_whitelist
                 method_to_add_to["lines"][-1] = method_to_add_to["lines"][-1][:-1] + typehint_tokens(
                     tokenized_line,
                     OperatorHandleMode.ENABLED
-                    # OperatorHandleMode.REFERENCE if ignore_operators else OperatorHandleMode.ENABLED
                 )
 
             else:
                 method_to_add_to["lines"].append(typehint_tokens(
                     tokenized_line,
                     OperatorHandleMode.ENABLED
-                    # OperatorHandleMode.REFERENCE if tokenized_line[0] in parse_whitelist else OperatorHandleMode.ENABLED
                 ))
 
         else:
