@@ -34,6 +34,7 @@ classifiers = [
 [project.optional-dependencies]
 tests = [
     "rich",
+    "pytest"
 ]
 
 [project.scripts]

@@ -12,13 +12,12 @@ class Argument():
 
         # Handle the variable storage location
         self.target, self.class_ = self.engine.stack[-1]["variables"], "_global"
-        if isinstance(self.name, str):
-            if self.name and self.name[0] in [".", "@"]:
-                if self.name[0] == ".":
-                    self.class_ = self.engine.stack[-1]["class"]
+        if isinstance(self.name, str) and self.name and self.name[0] in [".", "@"]:
+            if self.name[0] == ".":
+                self.class_ = self.engine.stack[-1]["class"]
 
-                self.name = self.name[1:]
-                self.target = self.engine.classes[self.class_]["variables"]
+            self.name = self.name[1:]
+            self.target = self.engine.classes[self.class_]["variables"]
 
         # Engine: the execution engine, self explanatory.
         # Type: "ref", "lit", or "opr". Odds are, it's probably "ref" if Argument() is being called on it.
