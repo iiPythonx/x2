@@ -22,7 +22,7 @@ class CLI(object):
             {"args": ["--decimal"], "desc": "Enable decimal precision mode"}
         ]
         self.usage = f"""x++ (x{__version__})
-(c) 2021-24 iiPython; (c) 2022-23 Dm123321_31mD "DmmD" Gaming
+(c) 2021-24 iiPython; (c) 2022-23 DmmD Gaming
 
 Usage:
     xpp [options] [flags] <file>
